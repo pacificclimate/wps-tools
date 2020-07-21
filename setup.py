@@ -15,7 +15,6 @@ setup(
     author=__author__,
     author_email=__email__,
     packages=["wps_tools"],
-    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
