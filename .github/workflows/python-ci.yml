@@ -20,8 +20,8 @@ jobs:
       env:
         PIP_INDEX_URL: https://pypi.pacificclimate.org/simple
       run: |
-        pip install -r requirements.txt
-        pip install -r requirements_dev.txt
+        pip install -r requirements.txt test_requirements.txt
+        pip install .
     - name: Test with pytest (full)
       if: github.ref == 'refs/heads/master'
       run: |
@@ -30,3 +30,5 @@ jobs:
       if: github.ref != 'refs/heads/master'
       run: |
         py.test -m "not online and not slow" -v
+    - name: Code Quality
+      run: black . --check
