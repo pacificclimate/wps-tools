@@ -1,11 +1,11 @@
 # wps-tools
 Modules in `wps_tools` directory used to help create wps processes
 
-## utils/utils.py
+## utils.py
 Functions used to collect pywps inputs/outputs and handle logging information
 
-## io/io_objects.py
+## io.py
 Collection of commonly used pywps inputs and outputs
 
-## testing/pytest_helpers.py
+## testing.py
 Functions used to help run `pytest` suite
