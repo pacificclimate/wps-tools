@@ -6,6 +6,8 @@ from pywps.app.exceptions import ProcessError
 # Tool import
 from nchelpers import CFDataset
 
+MAX_OCCURS = 1000  # Maximum permissible occurences of a given pywps input
+
 
 def is_opendap_url(url):  # From Finch bird
     """
