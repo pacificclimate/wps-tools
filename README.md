@@ -1,11 +1,17 @@
 # wps-tools
-Modules used to help create wps_processes
+Modules used to help create wps processes
 
-## utils.py
-Contains functions that are used by multiple birds.
+## input_utils.py
+Functions used to collect pywps inputs
 
-## wps_io.py
-Contains multiple pywps i/o objects.
+## output_utils.py
+Functions used to collect pywps outputs
 
-## common.py
-Contains functions used by `pytest` functions.
+## log_utils.py
+Functions used to handle logging information
+
+## io_objects.py
+Collection of commonly used pywps inputs and outputs
+
+## pytest_utils.py
+Functions used to help run `pytest` suite# wps-tools
