@@ -14,4 +14,4 @@ Functions used to handle logging information
 Collection of commonly used pywps inputs and outputs
 
 ## pytest_utils.py
-Functions used to help run `pytest` suite# wps-tools
+Functions used to help run `pytest` suite
