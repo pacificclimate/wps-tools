@@ -70,7 +70,6 @@ def get_filepaths(request):
 def collect_output_files(varname, outdir=os.getcwd()):
     """
     Collect output netcdf files.
-
     Parameters:
         varname (str): name of variable (must be in filenames)
         outdir (str): Directory containing output files
@@ -88,7 +87,6 @@ def build_meta_link(
 ):
     """
     Create meta link between output netcdf files.
-
     Parameters:
         varname (str): name of variable (used for MetaLink4)
         desc (str): Description of meta file
