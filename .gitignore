@@ -1,0 +1,26 @@
+# PyWPS
+custom.cfg
+.custom.cfg
+*.pid
+
+# Python / Extensions etc.
+*~
+*.mo
+*.so
+*.pyc
+*.pyo
+*.egg
+*.egg-info
+*.sqlite
+*.bak
+__pycache__
+*venv/
+
+# Unit test / Coverage reports
+.cache
+.pytest_cache
+.coverage
+.tox
+nosetests.xml
+unit_tests/testdata.json
+coverage/
