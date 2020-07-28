@@ -10,7 +10,7 @@ from wps_tools.testing import (
     local_path,
     opendap_path,
 )
-from test_processes.wps_generate_climos import GenerateClimos
+from .test_processes.wps_generate_climos import GenerateClimos
 
 test_local_file = local_path("gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc")
 
@@ -34,7 +34,7 @@ def setup_wps_process():
     ("url"),
     [
         "http://docker-dev03.pcic.uvic.ca:8083/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/tiny_hydromodel_gcm_climos.nc",
-        resource_filename(__name__, "test_utils.py"),
+        test_local_file,
     ],
 )
 def test_is_opendap_url(url):
@@ -45,7 +45,7 @@ def test_is_opendap_url(url):
 
 
 @pytest.mark.parametrize(("varname"), ["tiny"])
-@pytest.mark.parametrize(("outdir"), ["../wps_tools/data"])
+@pytest.mark.parametrize(("outdir"), [resource_filename(__name__, "data")])
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
     assert len(outfiles) == 2
@@ -58,7 +58,7 @@ def test_build_meta_link(outfiles):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir="../wps_tools/data",
+        outdir=resource_filename(__name__, "data"),
     )
     assert (
         '<file name="tiny_daily_prsn.nc">' in xml
