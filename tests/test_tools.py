@@ -14,19 +14,15 @@ from wps_tools.testing import (
 from processes.wps_say_hello import SayHello
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
-local_file = local_path(nc_file)
-opendap_file = opendap_path(nc_file)
-
-
 
 
 # Test 'testing' functions
 def test_local_path():
-    assert f"tests/data/{nc_file}" in local_path(local_file)
+    assert f"tests/data/{nc_file}" in local_path(nc_file)
 
 
 def test_opendap_path():
-    assert f"datasets/TestData/{nc_file}" in opendap_path(opendap_file)
+    assert f"datasets/TestData/{nc_file}" in opendap_path(nc_file)
 
 
 def test_run_wps_process():
@@ -37,7 +33,7 @@ def test_run_wps_process():
 # Test 'utils' functions
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("url"), [opendap_file, local_file,],
+    ("url"), [opendap_path(nc_file), local_path(nc_file),],
 )
 def test_is_opendap_url(url):
     if "docker" in url:

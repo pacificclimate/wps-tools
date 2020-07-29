@@ -52,9 +52,9 @@ def is_opendap_url(url):  # From Finch bird
         return dataset.disk_format in ("DAP2", "DAP4")
 
 
-def get_filepaths(request):
+def get_filepaths(nc_input):
     filepaths = []
-    for path in request.inputs["netcdf"]:
+    for path in nc_input:
         if is_opendap_url(path.url):
             filepaths.append(path.url)
         elif path.file.endswith(".nc"):
@@ -62,7 +62,7 @@ def get_filepaths(request):
         else:
             raise ProcessError(
                 "You must provide a data source (opendap/netcdf). "
-                f"Inputs provided: {request.inputs}"
+                f"Inputs provided: {nc_input}"
             )
     return filepaths
 
