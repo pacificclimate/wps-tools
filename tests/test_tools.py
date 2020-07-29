@@ -11,25 +11,13 @@ from wps_tools.testing import (
     opendap_path,
     run_wps_process,
 )
-from processes.wps_generate_climos import GenerateClimos
+from processes.wps_say_hello import SayHello
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 local_file = local_path(nc_file)
 opendap_file = opendap_path(nc_file)
 
 
-def setup_wps_process():
-    params = (
-        f"netcdf=@xlink:href={local_file};"
-        "operation=mean;"
-        "climo=6190;"
-        "resolutions=yearly;"
-        "convert_longitudes=True;"
-        "split_vars=True;"
-        "split_intervals=True;"
-        "dry_run=False;"
-    )
-    return params
 
 
 # Test 'testing' functions
@@ -42,8 +30,8 @@ def test_opendap_path():
 
 
 def test_run_wps_process():
-    params = setup_wps_process()
-    run_wps_process(GenerateClimos(), params)
+    params = "name=PCIC"
+    run_wps_process(SayHello(), params)
 
 
 # Test 'utils' functions
