@@ -9,15 +9,18 @@ from wps_tools.utils import (
 from wps_tools.testing import (
     local_path,
     opendap_path,
+    run_wps_process,
 )
-from .test_processes.wps_generate_climos import GenerateClimos
+from processes.wps_generate_climos import GenerateClimos
 
-test_local_file = local_path("gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc")
+nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+local_file = local_path(nc_file)
+opendap_file = opendap_path(nc_file)
 
 
 def setup_wps_process():
     params = (
-        f"netcdf=@xlink:href={test_local_file};"
+        f"netcdf=@xlink:href={local_file};"
         "operation=mean;"
         "climo=6190;"
         "resolutions=yearly;"
@@ -29,13 +32,25 @@ def setup_wps_process():
     return params
 
 
+# Test 'testing' functions
+def test_local_path():
+    assert f"tests/data/{nc_file}" in local_path(local_file)
+
+
+def test_opendap_path():
+    assert f"datasets/TestData/{nc_file}" in opendap_path(opendap_file)
+
+
+def test_run_wps_process():
+    params = setup_wps_process()
+    print(params)
+    run_wps_process(GenerateClimos(), params)
+
+
+# Test 'utils' functions
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("url"),
-    [
-        "http://docker-dev03.pcic.uvic.ca:8083/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/tiny_hydromodel_gcm_climos.nc",
-        test_local_file,
-    ],
+    ("url"), [opendap_file, local_file,],
 )
 def test_is_opendap_url(url):
     if "docker" in url:

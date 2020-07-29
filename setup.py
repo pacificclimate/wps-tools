@@ -13,7 +13,7 @@ setup(
     author="Eric Yvorchuk",
     author_email="eyvorchuk@uvic.ca",
     packages=["wps_tools"],
-    package_data={"wps-tools": ["tests/data/*.nc"], "tests": ["data/*.nc"],},
+    package_data={"wps-tools": ["tests/data/*.nc", "processes/*.py"], "tests": ["data/*.nc"],},
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3.6",
