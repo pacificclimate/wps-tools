@@ -43,7 +43,6 @@ def test_opendap_path():
 
 def test_run_wps_process():
     params = setup_wps_process()
-    print(params)
     run_wps_process(GenerateClimos(), params)
 
 
