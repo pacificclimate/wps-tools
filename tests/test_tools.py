@@ -1,10 +1,12 @@
 import pytest
+import logging
 from pkg_resources import resource_filename
 from wps_tools.utils import (
     is_opendap_url,
     get_filepaths,
     collect_output_files,
     build_meta_link,
+    log_handler,
 )
 from wps_tools.testing import (
     local_path,
@@ -20,6 +22,16 @@ class NCInput:  # For testing 'get_filepaths'
     def __init__(self, url="", file=""):
         self.url = url
         self.file = file
+
+
+class Response:  # For testing 'log_handler'
+    def __init__(self):
+        self.message = ""
+        self.status_percentage = 0
+
+    def update_status(self, message, status_percentage):
+        self.message = message
+        self.status_percentage = status_percentage
 
 
 # Test 'testing' functions
@@ -88,3 +100,18 @@ def test_build_meta_link(outfiles):
         '<file name="tiny_daily_prsn.nc">' in xml
         and '<file name="tiny_daily_pr.nc">' in xml
     )
+
+
+@pytest.mark.parametrize(("message"), ["Process completed"])
+@pytest.mark.parametrize(("process_step"), ["complete"])
+def test_log_handler(message, process_step, caplog):
+    response = Response()
+    caplog.set_level(logging.INFO, logger="PYWPS")
+    log_handler(SayHello(), response, message=message, process_step=process_step)
+    assert response.message == message
+    assert (
+        response.status_percentage == SayHello().status_percentage_steps[process_step]
+    )
+    #for record in caplog.records:
+    #    assert record.levelno == "INFO"
+    #assert message in caplog.text

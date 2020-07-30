@@ -10,6 +10,10 @@ class SayHello(Process):
     """A nice process saying 'hello'."""
 
     def __init__(self):
+        self.status_percentage_steps = {
+            "start": 0,
+            "complete": 100,
+        }
         inputs = [
             LiteralInput(
                 "name",
