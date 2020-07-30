@@ -20,7 +20,7 @@ def local_path(nc_file):
 
 
 def opendap_path(nc_file):
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/{nc_file}"
+    return f"http://docker-dev03.pcic.uvic.ca:8083/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/{nc_file}"
 
 
 def client_for(service):

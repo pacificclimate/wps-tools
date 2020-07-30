@@ -16,6 +16,12 @@ from processes.wps_say_hello import SayHello
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 
 
+class NCInput:  # For testing 'get_filepaths'
+    def __init__(self, url="", file=""):
+        self.url = url
+        self.file = file
+
+
 # Test 'testing' functions
 def test_local_path():
     assert f"tests/data/{nc_file}" in local_path(nc_file)
@@ -40,6 +46,26 @@ def test_is_opendap_url(url):
         assert is_opendap_url(url)
     else:
         assert not is_opendap_url(url)
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("nc_input"),
+    [
+        [NCInput(file=local_path(nc_file))],
+        [NCInput(url=opendap_path(nc_file))],
+        [NCInput(file=local_path(nc_file)), NCInput(url=opendap_path(nc_file))],
+    ],
+)
+def test_get_filepaths(nc_input):
+    for input in nc_input:
+        if input.url != "":
+            assert is_opendap_url(input.url)
+
+    paths = get_filepaths(nc_input)
+    assert len(paths) == len(nc_input)
+    for path in paths:
+        assert nc_file in path
 
 
 @pytest.mark.parametrize(("varname"), ["tiny"])
