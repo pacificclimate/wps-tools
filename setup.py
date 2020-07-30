@@ -8,15 +8,18 @@ setup(
     name="wps_tools",
     description="A collection of modules used to help create wps processes",
     keywords="wps pywps wps_tools",
-    version='.'.join(str(d) for d in __version__),
+    version=".".join(str(d) for d in __version__),
     url="https://github.com/pacificclimate/wps-tools",
     author="Eric Yvorchuk",
     author_email="eyvorchuk@uvic.ca",
     packages=["wps_tools"],
-    package_data={"wps-tools": ["tests/data/*.nc", "processes/*.py"], "tests": ["data/*.nc"],},
+    package_data={
+        "wps-tools": ["tests/data/*.nc", "processes/*.py"],
+        "tests": ["data/*.nc"],
+    },
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-    ]
+    ],
 )
