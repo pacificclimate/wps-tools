@@ -112,6 +112,6 @@ def test_log_handler(message, process_step, caplog):
     assert (
         response.status_percentage == SayHello().status_percentage_steps[process_step]
     )
-    #for record in caplog.records:
+    # for record in caplog.records:
     #    assert record.levelno == "INFO"
-    #assert message in caplog.text
+    # assert message in caplog.text
