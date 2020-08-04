@@ -85,7 +85,7 @@ def test_get_filepaths(nc_input):
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
     assert len(outfiles) == 2
-    assert outfiles == ["tiny_daily_prsn.nc", "tiny_daily_pr.nc"]
+    assert set(outfiles) == set(["tiny_daily_prsn.nc", "tiny_daily_pr.nc"])
 
 
 @pytest.mark.parametrize(("outfiles"), [["tiny_daily_prsn.nc", "tiny_daily_pr.nc"]])
