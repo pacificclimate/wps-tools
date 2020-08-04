@@ -33,9 +33,9 @@ def test_opendap_path(nc_file):
     assert f"datasets/TestData/{nc_file}" in opendap_path(nc_file)
 
 
-@pytest.mark.parametrize(("name"), ["PCIC"])
-def test_run_wps_process(name):
-    params = f"name={name}"
+@pytest.mark.parametrize(("string"), ["Hello"])
+def test_run_wps_process(string):
+    params = f"string={string}"
     run_wps_process(TestingProcess(), params)
 
 

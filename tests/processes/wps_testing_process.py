@@ -41,5 +41,5 @@ class TestingProcess(Process):
     @staticmethod
     def _handler(request, response):
         LOGGER.info("Begin test process")
-        response.outputs["output"].data = request.inputs["name"][0].data
+        response.outputs["output"].data = request.inputs["string"][0].data
         return response
