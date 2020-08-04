@@ -14,24 +14,9 @@ from wps_tools.testing import (
     run_wps_process,
 )
 from .processes.wps_test_process import TestProcess
+from .conftest import NCInput, Response
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
-
-
-class NCInput:  # For testing 'get_filepaths'
-    def __init__(self, url="", file=""):
-        self.url = url
-        self.file = file
-
-
-class Response:  # For testing 'log_handler'
-    def __init__(self):
-        self.message = ""
-        self.status_percentage = 0
-
-    def update_status(self, message, status_percentage):
-        self.message = message
-        self.status_percentage = status_percentage
 
 
 # Test 'testing' functions
@@ -110,7 +95,8 @@ def test_log_handler(message, process_step, caplog):
     log_handler(TestProcess(), response, message=message, process_step=process_step)
     assert response.message == message
     assert (
-        response.status_percentage == TestProcess().status_percentage_steps[process_step]
+        response.status_percentage
+        == TestProcess().status_percentage_steps[process_step]
     )
     # for record in caplog.records:
     #    assert record.levelno == "INFO"
