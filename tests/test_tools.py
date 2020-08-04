@@ -13,7 +13,7 @@ from wps_tools.testing import (
     opendap_path,
     run_wps_process,
 )
-from .processes.wps_testing_process import TestingProcess
+from .processes.wps_test_process import TestProcess
 from .conftest import NCInput, Response
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
@@ -36,7 +36,7 @@ def test_opendap_path(nc_file):
 @pytest.mark.parametrize(("string"), ["Hello"])
 def test_run_wps_process(string):
     params = f"string={string}"
-    run_wps_process(TestingProcess(), params)
+    run_wps_process(TestProcess(), params)
 
 
 # Test 'utils' functions
@@ -101,11 +101,11 @@ def test_build_meta_link(outfiles, expected):
 def test_log_handler(message, process_step, caplog):
     response = Response()
     caplog.set_level(logging.INFO, logger="PYWPS")
-    log_handler(TestingProcess(), response, message=message, process_step=process_step)
+    log_handler(TestProcess(), response, message=message, process_step=process_step)
     assert response.message == message
     assert (
         response.status_percentage
-        == TestingProcess().status_percentage_steps[process_step]
+        == TestProcess().status_percentage_steps[process_step]
     )
     # for record in caplog.records:
     #    assert record.levelno == "INFO"

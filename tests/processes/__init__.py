@@ -1,5 +1,5 @@
-from .wps_testing_process import TestingProcess
+from .wps_test_process import TestProcess
 
 processes = [
-    TestingProcess(),
+    TestProcess(),
 ]

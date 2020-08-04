@@ -5,7 +5,7 @@ import logging
 LOGGER = logging.getLogger("PYWPS")
 
 
-class TestingProcess(Process):
+class TestProcess(Process):
     """A simple wps process. Outputs the input string."""
 
     def __init__(self):
@@ -27,10 +27,10 @@ class TestingProcess(Process):
             )
         ]
 
-        super(TestingProcess, self).__init__(
+        super(TestProcess, self).__init__(
             self._handler,
-            identifier="testing_process",
-            title="Testing Process",
+            identifier="test_process",
+            title="Test Process",
             abstract="A simple process that returns the string that was inputted.",
             inputs=inputs,
             outputs=outputs,
