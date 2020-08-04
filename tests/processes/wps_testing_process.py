@@ -1,12 +1,11 @@
-from pywps import Process, LiteralInput, LiteralOutput, UOM
-from pywps.app.Common import Metadata
+from pywps import Process, LiteralInput, LiteralOutput
 
 import logging
 
 LOGGER = logging.getLogger("PYWPS")
 
 
-class TestProcess(Process):
+class TestingProcess(Process):
     """A simple wps process. Outputs the input string."""
 
     def __init__(self):
@@ -28,10 +27,10 @@ class TestProcess(Process):
             )
         ]
 
-        super(SayHello, self).__init__(
+        super(TestingProcess, self).__init__(
             self._handler,
-            identifier="test_process",
-            title="Test Process",
+            identifier="testing_process",
+            title="Testing Process",
             abstract="A simple process that returns the string that was inputted.",
             inputs=inputs,
             outputs=outputs,
