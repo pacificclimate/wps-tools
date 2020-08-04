@@ -14,8 +14,8 @@ setup(
     author_email="eyvorchuk@uvic.ca",
     packages=["wps_tools"],
     package_data={
-        "wps-tools": ["tests/data/*.nc", "processes/*.py"],
-        "tests": ["data/*.nc"],
+        "wps-tools": ["tests/data/*.nc"],
+        "tests": ["data/*.nc", "processes/*.py"],
     },
     include_package_data=True,
     classifiers=[
