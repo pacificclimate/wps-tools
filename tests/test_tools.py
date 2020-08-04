@@ -22,18 +22,18 @@ nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 # Test 'testing' functions
 
 
-@pytest.mark.parametrize("nc_file", [nc_file])
+@pytest.mark.parametrize(("nc_file"), [nc_file])
 def test_local_path(nc_file):
     assert f"tests/data/{nc_file}" in local_path(nc_file)
 
 
 @pytest.mark.online
-@pytest.mark.parametrize("nc_file", [nc_file])
+@pytest.mark.parametrize(("nc_file"), [nc_file])
 def test_opendap_path(nc_file):
     assert f"datasets/TestData/{nc_file}" in opendap_path(nc_file)
 
 
-@pytest.mark.parametrize("name", ["PCIC"])
+@pytest.mark.parametrize(("name"), ["PCIC"])
 def test_run_wps_process(name):
     params = f"name={name}"
     run_wps_process(TestProcess(), params)
@@ -46,9 +46,11 @@ def test_run_wps_process(name):
 )
 def test_is_opendap_url(url):
     if "docker" in url:
-        assert is_opendap_url(url)
+        assert is_opendap_url(url)  # Ensure function recognizes this is an opendap file
     else:
-        assert not is_opendap_url(url)
+        assert not is_opendap_url(
+            url
+        )  # Ensure function recognizes this is not an opendap file
 
 
 @pytest.mark.online
@@ -80,17 +82,18 @@ def test_collect_output_files(varname, outdir):
 
 
 @pytest.mark.parametrize(("outfiles"), [["tiny_daily_prsn.nc", "tiny_daily_pr.nc"]])
-def test_build_meta_link(outfiles):
+@pytest.mark.parametrize(
+    ("expected"),
+    [['<file name="tiny_daily_prsn.nc">', '<file name="tiny_daily_pr.nc">']],
+)
+def test_build_meta_link(outfiles, expected):
     xml = build_meta_link(
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
         outdir=resource_filename(__name__, "data"),
     )
-    assert (
-        '<file name="tiny_daily_prsn.nc">' in xml
-        and '<file name="tiny_daily_pr.nc">' in xml
-    )
+    assert all([elem in xml for elem in expected])
 
 
 @pytest.mark.parametrize(("message"), ["Process completed"])
