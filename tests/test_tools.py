@@ -20,16 +20,22 @@ nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 
 
 # Test 'testing' functions
-def test_local_path():
+
+
+@pytest.mark.parametrize("nc_file", [nc_file])
+def test_local_path(nc_file):
     assert f"tests/data/{nc_file}" in local_path(nc_file)
 
 
-def test_opendap_path():
+@pytest.mark.online
+@pytest.mark.parametrize("nc_file", [nc_file])
+def test_opendap_path(nc_file):
     assert f"datasets/TestData/{nc_file}" in opendap_path(nc_file)
 
 
-def test_run_wps_process():
-    params = "name=PCIC"
+@pytest.mark.parametrize("name", ["PCIC"])
+def test_run_wps_process(name):
+    params = f"name={name}"
     run_wps_process(TestProcess(), params)
 
 
