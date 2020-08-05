@@ -1,2 +1,3 @@
 pywps==4.2.6
 nchelpers==5.5.7
+testfixtures==6.14.1

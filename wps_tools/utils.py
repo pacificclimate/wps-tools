@@ -10,6 +10,7 @@ from nchelpers import CFDataset
 
 # Library imports
 import logging
+from testfixtures import LogCapture
 import os
 
 MAX_OCCURS = 1000
@@ -120,6 +121,10 @@ def log_handler(process, response, message, process_step=None, level="INFO"):
         status_percentage = response.status_percentage
 
     # Log to all sources
-    pywps_logger.log(getattr(logging, level), message)
-    stderr_logger.log(getattr(logging, level), message)
+    with LogCapture() as l:
+        logger = logging.getLogger()
+        logger.info("message")
+        # pywps_logger.log(getattr(logging, level), message)
+        # stderr_logger.log(getattr(logging, level), message)
+    l.check(("root", "INFO", "message"))
     response.update_status(message, status_percentage=status_percentage)
