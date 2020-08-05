@@ -98,15 +98,15 @@ def test_build_meta_link(outfiles, expected):
 
 @pytest.mark.parametrize(("message"), ["Process completed"])
 @pytest.mark.parametrize(("process_step"), ["complete"])
-def test_log_handler(message, process_step, caplog):
+def test_log_handler(message, process_step, capsys):
     response = Response()
-    caplog.set_level(logging.INFO, logger="PYWPS")
     log_handler(TestProcess(), response, message=message, process_step=process_step)
     assert response.message == message
     assert (
         response.status_percentage
         == TestProcess().status_percentage_steps[process_step]
     )
-    # for record in caplog.records:
-    #    assert record.levelno == "INFO"
-    # assert message in caplog.text
+    #  Ensure message is outputted by loggers
+    # out, err = capsys.readouterr()
+    # assert not out
+    # assert message in err
