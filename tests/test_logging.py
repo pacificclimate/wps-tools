@@ -8,7 +8,6 @@ from wps_tools.utils import log_handler
 from .common import Response
 from .processes.wps_test_process import TestProcess
 
-logging.root.setLevel(logging.INFO)
 logger = logging.getLogger()
 
 formatter = logging.Formatter(

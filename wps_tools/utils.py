@@ -12,7 +12,6 @@ from nchelpers import CFDataset
 import logging
 import os
 from pathlib import Path
-from testfixtures import LogCapture
 
 MAX_OCCURS = 1000
 
@@ -114,9 +113,11 @@ def build_meta_link(
 
     return meta_link.xml
 
-def log_file_path(process): # From Finch bird
+
+def log_file_path(process):  # From Finch bird
     """Returns the filepath to write the process logfile."""
     return Path(process.workdir) / "log.txt"
+
 
 def log_handler(process, response, message, logger, process_step=None):
     if process_step:
