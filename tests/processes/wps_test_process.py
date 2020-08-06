@@ -1,5 +1,4 @@
 from pywps import Process, LiteralInput, LiteralOutput
-
 import logging
 
 LOGGER = logging.getLogger("PYWPS")
