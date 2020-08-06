@@ -1,5 +1,6 @@
 import pytest
 import logging
+from testfixtures import LogCapture
 from pkg_resources import resource_filename
 from wps_tools.utils import (
     is_opendap_url,
@@ -18,6 +19,16 @@ from .conftest import NCInput, Response
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 
+#pywps_logger = logging.getLogger("PYWPS")
+logging.root.setLevel(logging.INFO)
+logger = logging.getLogger()
+
+formatter = logging.Formatter(
+    "%(asctime)s %(levelname)s: wps-tools: %(message)s", "%Y-%m-%d %H:%M:%S"
+)
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # Test 'testing' functions
 
@@ -98,11 +109,28 @@ def test_build_meta_link(outfiles, expected):
 
 @pytest.mark.parametrize(("message"), ["Process completed"])
 @pytest.mark.parametrize(("process_step"), ["complete"])
-def test_log_handler(message, process_step):
+@pytest.mark.parametrize(("level"), ["INFO"])
+def test_log_handler(message, process_step, level):
     response = Response()
-    log_handler(TestProcess(), response, message=message, process_step=process_step)
+    lc = LogCapture()
+    logger.setLevel(level)
+    logger.log(logger.level, message)
+    log_handler(TestProcess(), response, message=message, logger=logger, process_step=process_step)
     assert response.message == message
     assert (
         response.status_percentage
         == TestProcess().status_percentage_steps[process_step]
     )
+    lc.check(("root", level, message))
+
+def test_caplog(caplog):
+    caplog.set_level(logging.INFO)
+    logger.setLevel(logging.INFO)
+    logger.info("Hello")
+    assert "Hello" in caplog.text
+
+def test_log_capture():
+    with LogCapture() as l:
+        logger.setLevel(logging.INFO)
+        logger.info("Hello")
+    l.check(("root", "INFO", "Hello"))

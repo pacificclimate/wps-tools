@@ -1,5 +1,5 @@
 # Processor imports
-from pywps import FORMATS
+from pywps import FORMATS, Process
 from requests import head
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from pywps.inout.outputs import MetaLink4, MetaFile
@@ -10,8 +10,9 @@ from nchelpers import CFDataset
 
 # Library imports
 import logging
-from testfixtures import LogCapture
 import os
+from pathlib import Path
+from testfixtures import LogCapture
 
 MAX_OCCURS = 1000
 
@@ -113,18 +114,17 @@ def build_meta_link(
 
     return meta_link.xml
 
+def log_file_path(process): # From Finch bird
+    """Returns the filepath to write the process logfile."""
+    return Path(process.workdir) / "log.txt"
 
-def log_handler(process, response, message, process_step=None, level="INFO"):
+def log_handler(process, response, message, logger, process_step=None):
     if process_step:
         status_percentage = process.status_percentage_steps[process_step]
     else:
         status_percentage = response.status_percentage
 
     # Log to all sources
-    with LogCapture() as l:
-        logger = logging.getLogger()
-        logger.info("message")
-        # pywps_logger.log(getattr(logging, level), message)
-        # stderr_logger.log(getattr(logging, level), message)
-    l.check(("root", "INFO", "message"))
+    logger.log(logger.level, message)
+    log_file_path(process).open("a", encoding="utf8").write(message + "\n")
     response.update_status(message, status_percentage=status_percentage)
