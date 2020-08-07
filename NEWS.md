@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 0.1.1
+*2020 Aug 7
+
+* Add test suite to test `wps_tools` functions
+
 ## 0.1.0
 *2020 Jul 23*
 
