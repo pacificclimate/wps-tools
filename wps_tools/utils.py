@@ -112,7 +112,14 @@ def build_meta_link(
     return meta_link.xml
 
 
-def log_handler(process, response, message, process_step=None, log_level="INFO", log_file_name="log.txt"):
+def log_handler(
+    process,
+    response,
+    message,
+    process_step=None,
+    log_level="INFO",
+    log_file_name="log.txt",
+):
     if process_step:
         status_percentage = process.status_percentage_steps[process_step]
     else:
