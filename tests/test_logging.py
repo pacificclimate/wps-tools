@@ -1,8 +1,7 @@
 import pytest
 import logging
 import os
-from collections import namedtuple
-import tempfile
+from tempfile import TemporaryDirectory
 from pkg_resources import resource_filename
 from wps_tools.utils import log_handler
 from .common import Response
@@ -24,10 +23,9 @@ logger.addHandler(handler)
 def test_log_handler(message, process_step, level, caplog):
     process = TestProcess()
     response = Response()
-    with tempfile.TemporaryDirectory() as tmpdir:  # For storing temporary log.txt file
+    with TemporaryDirectory() as tmpdir:  # For storing temporary log.txt file
         process.workdir = tmpdir
         logger.setLevel(level)
-        logger.log(logger.level, message)
         log_handler(
             process, response, message=message, logger=logger, process_step=process_step
         )
