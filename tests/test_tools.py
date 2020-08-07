@@ -74,18 +74,23 @@ def test_get_filepaths(nc_input):
         assert nc_file in path
 
 
-@pytest.mark.parametrize(("varname"), ["tiny"])
-@pytest.mark.parametrize(("outdir"), [resource_filename(__name__, "data")])
+@pytest.mark.parametrize(
+    ("varname", "outdir"), [("tiny", resource_filename(__name__, "data"))]
+)
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
     assert len(outfiles) == 2
     assert set(outfiles) == set(["tiny_daily_prsn.nc", "tiny_daily_pr.nc"])
 
 
-@pytest.mark.parametrize(("outfiles"), [["tiny_daily_prsn.nc", "tiny_daily_pr.nc"]])
 @pytest.mark.parametrize(
-    ("expected"),
-    [['<file name="tiny_daily_prsn.nc">', '<file name="tiny_daily_pr.nc">']],
+    ("outfiles", "expected"),
+    [
+        (
+            ["tiny_daily_prsn.nc", "tiny_daily_pr.nc"],
+            ['<file name="tiny_daily_prsn.nc">', '<file name="tiny_daily_pr.nc">'],
+        )
+    ],
 )
 def test_build_meta_link(outfiles, expected):
     xml = build_meta_link(

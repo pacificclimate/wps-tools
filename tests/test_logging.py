@@ -4,7 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 from pkg_resources import resource_filename
 from wps_tools.utils import log_handler
-from .common import Response
+from .common import TestResponse
 from .processes.wps_test_process import TestProcess
 
 logger = logging.getLogger()
@@ -17,12 +17,12 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-@pytest.mark.parametrize(("message"), ["Process completed"])
-@pytest.mark.parametrize(("process_step"), ["complete"])
-@pytest.mark.parametrize(("level"), ["INFO"])
+@pytest.mark.parametrize(
+    ("message, process_step, level"), [("Process completed", "complete", "INFO")]
+)
 def test_log_handler(message, process_step, level, caplog):
     process = TestProcess()
-    response = Response()
+    response = TestResponse()
     with TemporaryDirectory() as tmpdir:  # For storing temporary log.txt file
         process.workdir = tmpdir
         logger.setLevel(level)

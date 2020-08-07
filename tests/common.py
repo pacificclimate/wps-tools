@@ -1,4 +1,4 @@
-class Response:  # For testing 'log_handler'
+class TestResponse:  # For testing 'log_handler'
     def __init__(self):
         self.message = ""
         self.status_percentage = 0
