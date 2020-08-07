@@ -1,5 +1,5 @@
 # Processor imports
-from pywps import FORMATS
+from pywps import FORMATS, Process
 from requests import head
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from pywps.inout.outputs import MetaLink4, MetaFile
@@ -11,20 +11,19 @@ from nchelpers import CFDataset
 # Library imports
 import logging
 import os
+from pathlib import Path
 
 MAX_OCCURS = 1000
 
 
-pywps_logger = logging.getLogger("PYWPS")
-stderr_logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 formatter = logging.Formatter(
-    "%(asctime)s %(levelname)s: thunderbird: %(message)s", "%Y-%m-%d %H:%M:%S"
+    "%(asctime)s %(levelname)s: wps-tools: %(message)s", "%Y-%m-%d %H:%M:%S"
 )
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
-stderr_logger.addHandler(handler)
-stderr_logger.setLevel(stderr_logger.level)
+logger.addHandler(handler)
 
 
 def is_opendap_url(url):  # From Finch bird
@@ -52,9 +51,9 @@ def is_opendap_url(url):  # From Finch bird
         return dataset.disk_format in ("DAP2", "DAP4")
 
 
-def get_filepaths(request):
+def get_filepaths(nc_input):
     filepaths = []
-    for path in request.inputs["netcdf"]:
+    for path in nc_input:
         if is_opendap_url(path.url):
             filepaths.append(path.url)
         elif path.file.endswith(".nc"):
@@ -62,7 +61,7 @@ def get_filepaths(request):
         else:
             raise ProcessError(
                 "You must provide a data source (opendap/netcdf). "
-                f"Inputs provided: {request.inputs}"
+                f"Inputs provided: {nc_input}"
             )
     return filepaths
 
@@ -113,13 +112,21 @@ def build_meta_link(
     return meta_link.xml
 
 
-def log_handler(process, response, message, process_step=None, level="INFO"):
+def log_handler(
+    process,
+    response,
+    message,
+    process_step=None,
+    log_level="INFO",
+    log_file_name="log.txt",
+):
     if process_step:
         status_percentage = process.status_percentage_steps[process_step]
     else:
         status_percentage = response.status_percentage
 
     # Log to all sources
-    pywps_logger.log(getattr(logging, level), message)
-    stderr_logger.log(getattr(logging, level), message)
+    logger.log(getattr(logging, log_level), message)
+    log_file_path = Path(process.workdir) / log_file_name  # From Finch bird
+    log_file_path.open("a", encoding="utf8").write(message + "\n")
     response.update_status(message, status_percentage=status_percentage)

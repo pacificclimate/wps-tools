@@ -16,7 +16,7 @@ class WpsTestClient(WpsClient):
 
 
 def local_path(nc_file):
-    return f"file:///{resource_filename(__name__, 'data/' + nc_file)}"
+    return f"file:///{resource_filename('tests', 'data/' + nc_file)}"
 
 
 def opendap_path(nc_file):
