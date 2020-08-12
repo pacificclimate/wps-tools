@@ -16,6 +16,7 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
 @pytest.mark.parametrize(
     ("message", "process_step"), [("Process completed", "complete")]
 )
@@ -26,7 +27,9 @@ def test_log_handler(message, process_step, log_level, log_file_name, caplog):
     response = TestResponse()
     with TemporaryDirectory() as tmpdir:  # For storing temporary log.txt file
         process.workdir = tmpdir
-        log_handler(process, response, message, logger, log_level, process_step, log_file_name)
+        log_handler(
+            process, response, message, logger, log_level, process_step, log_file_name
+        )
         assert os.path.isfile(os.path.join(tmpdir, log_file_name))
     assert response.message == message
     assert (
