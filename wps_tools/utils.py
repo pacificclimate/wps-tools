@@ -16,16 +16,6 @@ from pathlib import Path
 MAX_OCCURS = 1000
 
 
-logger = logging.getLogger()
-
-formatter = logging.Formatter(
-    "%(asctime)s %(levelname)s: wps-tools: %(message)s", "%Y-%m-%d %H:%M:%S"
-)
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-
 def is_opendap_url(url):  # From Finch bird
     """
     Check if a provided url is an OpenDAP url.
@@ -116,8 +106,9 @@ def log_handler(
     process,
     response,
     message,
-    process_step=None,
+    logger,
     log_level="INFO",
+    process_step=None,
     log_file_name="log.txt",
 ):
     if process_step:
