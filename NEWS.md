@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 0.1.2
+*2020 Aug 12*
+
+* Add `logger` parameter to `log_handler` function
+
 ## 0.1.1
 *2020 Aug 7*
 
