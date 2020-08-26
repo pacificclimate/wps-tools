@@ -17,16 +17,20 @@ MAX_OCCURS = 1000
 
 
 def is_opendap_url(url):  # From Finch bird
-    """
-    Check if a provided url is an OpenDAP url.
+    """Check if a provided url is an OpenDAP url
+
     The DAP Standard specifies that a specific tag must be included in the
     Content-Description header of every request. This tag is one of:
         "dods-dds" | "dods-das" | "dods-data" | "dods-error"
     So we can check if the header starts with `dods`.
     Even then, some OpenDAP servers seem to not include the specified header...
     So we need to let the netCDF4 library actually open the file.
+
     Parameters:
         url (str): Provided url
+
+    Returns:
+        bool: True if url is OpenDAP, False otherwise
     """
     try:
         content_description = head(url, timeout=5).headers.get("Content-Description")
@@ -44,10 +48,18 @@ def is_opendap_url(url):  # From Finch bird
 
 
 def get_filepaths(nc_input):
-    """
-    Collect list of netcdf file paths.
+    """Collect list of netcdf file paths
+
+    Each path in nc_input is checked to determine if it is an OpenDAP url. If so,
+    then the url is appended to the path list. If not, then whether or not it's a valid
+    netcdf file is checked. If so, then the path is appended to the list. If not, then 
+    a ProcessError is raised due to an invalid input.
+
     Parameters:
-        nc_input (ComplexInput): Object containing local or OpenDAP file paths
+        nc_input (pywps.ComplexInput): Object containing local or OpenDAP file paths
+
+    Returns:
+        list: List of filepaths
     """
     filepaths = []
     for path in nc_input:
@@ -64,11 +76,19 @@ def get_filepaths(nc_input):
 
 
 def collect_output_files(varname, outdir=os.getcwd()):
-    """
-    Collect output netcdf files.
+    """Collect output netcdf files
+
+    The given directory is searched for the files that contain
+    the given variable name, indicating that these files were outputted
+    by the same process. Though the default directory is the current directory,
+    it is most often the current WPS process's working directory.
+    
     Parameters:
         varname (str): Name of variable (must be in file names)
         outdir (str): Directory containing output files
+
+    Returns:
+        list: List of output files
     """
     return [file for file in os.listdir(outdir) if varname in file]
 
@@ -81,15 +101,22 @@ def build_meta_link(
     fmt=FORMATS.NETCDF,
     outdir=os.getcwd(),
 ):
-    """
-    Create meta link between output files.
+    """Create meta link between output files
+
+    A MetaLink4 object is created to contain a description of the
+    process output, and a MetaFile is created for each output file to be
+    appended to this link.
+
     Parameters:
         varname (str): Name of variable (used for MetaLink4)
         desc (str): Description of meta file
         outfiles (list): List of output files
         format_name (str): Format name of output files
-        fmt (FORMATS): Format of output files
+        fmt (pywps.FORMATS): Format of output files
         outdir (str): Directory containing output files
+
+    Returns:
+        MetaLink4.xml: xml of metalink connecting output files
     """
     if len(outfiles) == 1:
         meta_link = MetaLink4(
@@ -118,12 +145,17 @@ def log_handler(
     process_step=None,
     log_file_name="log.txt",
 ):
-    """Output message to logger and update response status.
+    """Output message to logger and update response status
+
+    A message is outputted to a logger and log file at the specified level, and
+    the progress status of the response is updated according to the specified
+    process step. The log file is stored in the process's working directory.
+
     Parameters:
-        process (Process): Currently running WPS process
-        response (WPSResponse): Response object for process
+        process (pywps.Process): Currently running WPS process
+        response (pywps.WPSResponse): Response object for process
         message (str): Message to be outputted
-        logger (Logger): Logger to store messages
+        logger (logging.Logger): Logger to store messages
         log_level (str): Logging level at which to output message
         process_step (str): Current stage of process execution
         log_file_name (str): File to store logger content

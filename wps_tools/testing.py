@@ -8,8 +8,20 @@ xpath_ns = get_xpath_ns(VERSION)
 
 
 class WpsTestClient(WpsClient):
-    def get(self, *args, **kwargs):
-        """Build get request to run WPS process."""
+    """WPS client for testing processes"""
+    def get(self, **kwargs):
+        """Build and send get request to run WPS process
+        
+        Each parameter given by **kwargs is used as an element in a
+        get request query. Once the query is constructed, it is used as a
+        parameter for the WpsClient's get method.
+
+        Parameters:
+            **kwargs: key-value pairs used as query arguments
+
+        Returns:
+            WpsTestResponse: Response object from process execution
+        """
         query = "?"
         for key, value in kwargs.items():
             query += "{0}={1}&".format(key, value)
@@ -17,31 +29,48 @@ class WpsTestClient(WpsClient):
 
 
 def local_path(file_name):
-    """Return absolute path of file in tests/data directory.
+    """Return absolute path of file in tests/data directory
+
     Parameters:
         file_name (str): File name
+
+    Returns:
+        str: Absolute local file path
     """
     return f"file:///{resource_filename('tests', 'data/' + file_name)}"
 
 
 def opendap_path(file_name):
-    """Return OpenDAP url for file.
+    """Return OpenDAP url for file
+
     Parameters:
         file_name (str): File name
+
+    Returns:
+        str: OpenDAP url
     """
     return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/{file_name}"
 
 
 def client_for(service):
-    """Create WPS client to run process.
+    """Create WPS client to run process
+
     Parameters:
         service (Service): Service for WPS process
+    
+    Returns:
+        WpsTestClient: WPS client for running process in service
     """
     return WpsTestClient(service, WpsTestResponse)
 
 
 def run_wps_process(process, params):
-    """Run WPS process and ensure that execution is successful.
+    """Run WPS process and ensure that execution is successful
+
+    A WPS test client is created to build the get request to run the 
+    specified process, and the parameters are used as inputs to this request.
+    After execution, the status code of the response is checked to ensure success.
+
     Parameters:
         process (Process): Process to run
         params (str): Process parameters
