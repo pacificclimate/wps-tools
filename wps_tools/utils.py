@@ -25,6 +25,8 @@ def is_opendap_url(url):  # From Finch bird
     So we can check if the header starts with `dods`.
     Even then, some OpenDAP servers seem to not include the specified header...
     So we need to let the netCDF4 library actually open the file.
+    Parameters:
+        url (str): Provided url
     """
     try:
         content_description = head(url, timeout=5).headers.get("Content-Description")
@@ -42,6 +44,11 @@ def is_opendap_url(url):  # From Finch bird
 
 
 def get_filepaths(nc_input):
+    """
+    Collect list of netcdf file paths.
+    Parameters:
+        nc_input (ComplexInput): Object containing local or OpenDAP file paths
+    """
     filepaths = []
     for path in nc_input:
         if is_opendap_url(path.url):
@@ -60,7 +67,7 @@ def collect_output_files(varname, outdir=os.getcwd()):
     """
     Collect output netcdf files.
     Parameters:
-        varname (str): name of variable (must be in filenames)
+        varname (str): Name of variable (must be in file names)
         outdir (str): Directory containing output files
     """
     return [file for file in os.listdir(outdir) if varname in file]
@@ -75,9 +82,9 @@ def build_meta_link(
     outdir=os.getcwd(),
 ):
     """
-    Create meta link between output netcdf files.
+    Create meta link between output files.
     Parameters:
-        varname (str): name of variable (used for MetaLink4)
+        varname (str): Name of variable (used for MetaLink4)
         desc (str): Description of meta file
         outfiles (list): List of output files
         format_name (str): Format name of output files
@@ -111,6 +118,16 @@ def log_handler(
     process_step=None,
     log_file_name="log.txt",
 ):
+    """Output message to logger and update response status.
+    Parameters:
+        process (Process): Currently running WPS process
+        response (WPSResponse): Response object for process
+        message (str): Message to be outputted
+        logger (Logger): Logger to store messages
+        log_level (str): Logging level at which to output message
+        process_step (str): Current stage of process execution
+        log_file_name (str): File to store logger content
+    """
     if process_step:
         status_percentage = process.status_percentage_steps[process_step]
     else:
