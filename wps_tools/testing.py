@@ -9,6 +9,7 @@ xpath_ns = get_xpath_ns(VERSION)
 
 class WpsTestClient(WpsClient):
     """WPS client for testing processes"""
+
     def get(self, **kwargs):
         """Build and send get request to run WPS process
         
