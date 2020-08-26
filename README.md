@@ -83,4 +83,4 @@ git commit -m"Bump to version x.x.x"
 git tag -a -m"x.x.x" x.x.x
 git push --follow-tags
   ```
-4. [Github Actions](https://github.com/pacificclimate/climate-explorer-data-prep/blob/i130-full-actions/.github/workflows/pypi-publish.yml) will automatically build and publish the package to our pypi server
+4. [Github Actions](https://github.com/pacificclimate/wps-tools/blob/i16-update-documentation/.github/workflows/pypi-publish.yml) will automatically build and publish the package to our pypi server
