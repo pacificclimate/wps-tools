@@ -16,6 +16,9 @@ custom.cfg
 __pycache__
 *venv/
 
+# Distribution / packaging
+build/
+
 # Unit test / Coverage reports
 .cache
 .pytest_cache

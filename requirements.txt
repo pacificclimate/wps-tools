@@ -1,2 +1,5 @@
 pywps==4.2.6
 nchelpers==5.5.7
+
+# For documentation
+Sphinx==2.4.4
