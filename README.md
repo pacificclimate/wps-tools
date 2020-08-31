@@ -3,23 +3,21 @@
 
 ## Overview
 
-The Web Processing Services (WPS) at PCIC, known as birds, are developed and tested using many common functions. The `wps-tools` repository was created to store these functions in a single place, mitigating redundant code across the birds, and to simplify the creation and testing of new WPS processes. Currently, this repo is used as a Python package for the `thunderbird`, `osprey`, and `sandpiper` repositories and should be used for future birds.
+The Web Processing Services (WPS) at PCIC, known as birds, are developed and tested using many common functions. The `wps-tools` repository was created to store these functions in a single place, mitigating redundant code across the birds, and to simplify the creation and testing of new WPS processes. Currently, this repo is used as a Python package for the [thunderbird](https://github.com/pacificclimate/thunderbird), [osprey](https://github.com/pacificclimate/osprey), and [sandpiper](https://github.com/pacificclimate/sandpiper) repositories and should be used for future birds.
 
 ## Structure
 
-The respository's functions are divided across three modules in the `wps_tools` directory, and each function's use is described in their respective docstring.
+### io.py
+
+This module contains a collection of commonly used PyWPS inputs and outputs and are also mainly used in `wps_*.py` files.
+
+### testing.py
+
+These functions help run a bird's `pytest` suite and are thus mainly used in `test_*.py` files. 
 
 ### utils.py
 
 These functions gather PyWPS inputs, build PyWPS outputs, and handle logging information within a process's class file and are thus mainly used in `wps_*.py` files.
-
-### io.py
-
-This module contains a collection of commonly used PyWPS inputs and outputs and are also mainly used in `wps_*.py` files. These include the logging level, a toggle for if a dry run of the process should be executed, a single output netcdf file or a metalink connecting multiple output files, and a single output text file or metalink connecting multiple output text files containing the information provided by a dry run.
-
-### testing.py
-
-These functions help run a bird's `pytest` suite and are thus mainly used in `test_*.py` files. They consist of constructing the absolute local and OPeNDAP paths for a given file, building the WPS test client, and running a given process.
 
 ## Installation and Usage as Package
 
