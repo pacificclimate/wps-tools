@@ -83,17 +83,16 @@ def test_build_meta_link(outfiles, expected):
 
 
 @pytest.mark.parametrize(
-    ("http", "opendap"),
+    ("http", "expected"),
     [
         (
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/TestData/tiny_hydromodel_gcm_climos.nc",
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/tiny_hydromodel_gcm_climos.nc",
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/TestData/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc",
+            resource_filename(
+                __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+            ),
         )
     ],
 )
-def test_copy_http_content(http, opendap):
+def test_copy_http_content(http, expected):
     tmp_copy = copy_http_content(http)
-    print(dir(Dataset(tmp_copy)))
-
-    assert Dataset(tmp_copy).dimensions.keys() == Dataset(opendap).dimensions.keys()
-    assert Dataset(tmp_copy).variables.keys() == Dataset(opendap).variables.keys()
+    assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))
