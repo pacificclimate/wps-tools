@@ -82,6 +82,7 @@ def test_build_meta_link(outfiles, expected):
     assert all([elem in xml for elem in expected])
 
 
+@pytest.mark.online
 @pytest.mark.parametrize(
     ("http", "expected"),
     [
