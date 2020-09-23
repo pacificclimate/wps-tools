@@ -1,9 +1,10 @@
 # Processor imports
 from pywps import FORMATS, Process
-from requests import head
+from requests import head, get
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from pywps.inout.outputs import MetaLink4, MetaFile
 from pywps.app.exceptions import ProcessError
+from tempfile import NamedTemporaryFile
 
 # Tool import
 from nchelpers import CFDataset
@@ -170,3 +171,23 @@ def log_handler(
     log_file_path = Path(process.workdir) / log_file_name  # From Finch bird
     log_file_path.open("a", encoding="utf8").write(message + "\n")
     response.update_status(message, status_percentage=status_percentage)
+
+
+def make_tmp_copy(output):
+        '''
+        This function is implemented to make a temporary copy of files 
+        provided in http address that are inaccessible to the content
+        without downloading.
+
+        Parameters:
+            output (str): http address of the output of an Osprey process
+        Returs:
+            Path to the copied file in /tmp directory
+        '''
+        output_content = get(output.get()[0]).content
+    
+        tmp_copy = NamedTemporaryFile(
+            suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=False,
+        )
+        tmp_copy.write(output_content)
+        return tmp_copy.name
