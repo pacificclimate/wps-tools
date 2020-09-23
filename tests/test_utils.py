@@ -6,12 +6,14 @@ from wps_tools.utils import (
     get_filepaths,
     collect_output_files,
     build_meta_link,
+    copy_http_content,
 )
 from wps_tools.testing import (
     local_path,
     opendap_path,
 )
 from .processes.wps_test_process import TestProcess
+from netCDF4 import Dataset
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -78,3 +80,20 @@ def test_build_meta_link(outfiles, expected):
         outdir=resource_filename(__name__, "data"),
     )
     assert all([elem in xml for elem in expected])
+
+
+@pytest.mark.parametrize(
+    ("http", "opendap"),
+    [
+        (
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/TestData/tiny_hydromodel_gcm_climos.nc",
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/tiny_hydromodel_gcm_climos.nc",
+        )
+    ],
+)
+def test_copy_http_content(http, opendap):
+    tmp_copy = copy_http_content(http)
+    print(dir(Dataset(tmp_copy)))
+
+    assert Dataset(tmp_copy).dimensions.keys() == Dataset(opendap).dimensions.keys()
+    assert Dataset(tmp_copy).variables.keys() == Dataset(opendap).variables.keys()

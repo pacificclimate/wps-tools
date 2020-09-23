@@ -173,21 +173,21 @@ def log_handler(
     response.update_status(message, status_percentage=status_percentage)
 
 
-def make_tmp_copy(output):
-        '''
+def copy_http_content(http):
+    """
         This function is implemented to make a temporary copy of files 
         provided in http address that are inaccessible to the content
         without downloading.
 
         Parameters:
-            output (str): http address of the output of an Osprey process
+            http (str): http address
         Returs:
             Path to the copied file in /tmp directory
-        '''
-        output_content = get(output.get()[0]).content
-    
-        tmp_copy = NamedTemporaryFile(
-            suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=False,
-        )
-        tmp_copy.write(output_content)
-        return tmp_copy.name
+        """
+    http_content = get(http).content
+
+    tmp_copy = NamedTemporaryFile(
+        suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=False,
+    )
+    tmp_copy.write(http_content)
+    return tmp_copy.name
