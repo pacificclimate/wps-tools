@@ -96,6 +96,8 @@ def test_build_meta_link(outfiles, expected):
     ],
 )
 def test_copy_http_content(http, expected):
-    with NamedTemporaryFile(suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True) as tmp_file:
+    with NamedTemporaryFile(
+        suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True
+    ) as tmp_file:
         tmp_copy = copy_http_content(http, tmp_file)
         assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))
