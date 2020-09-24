@@ -14,6 +14,7 @@ from wps_tools.testing import (
 )
 from .processes.wps_test_process import TestProcess
 from netCDF4 import Dataset
+from tempfile import NamedTemporaryFile
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -95,5 +96,6 @@ def test_build_meta_link(outfiles, expected):
     ],
 )
 def test_copy_http_content(http, expected):
-    tmp_copy = copy_http_content(http)
-    assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))
+    with NamedTemporaryFile(suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True) as tmp_file:
+        tmp_copy = copy_http_content(http, tmp_file)
+        assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))

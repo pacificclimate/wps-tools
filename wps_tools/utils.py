@@ -4,7 +4,6 @@ from requests import head, get
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from pywps.inout.outputs import MetaLink4, MetaFile
 from pywps.app.exceptions import ProcessError
-from tempfile import NamedTemporaryFile
 
 # Tool import
 from nchelpers import CFDataset
@@ -173,21 +172,19 @@ def log_handler(
     response.update_status(message, status_percentage=status_percentage)
 
 
-def copy_http_content(http):
+def copy_http_content(http, tmp_file):
     """
-        This function is implemented to make a temporary copy of files 
-        provided in http address that are inaccessible to the content
-        without downloading.
+        This function is implemented to copy the content of a file passed
+        as an http address to a tmporary file.
 
         Parameters:
-            http (str): http address
-        Returs:
+            http (str): http address containing the desired content
+            tmp_file (tempfile._TemporaryFileWrapper): path to the 
+                temporary file that the content will be copied to
+        Returns:
             Path to the copied file in /tmp directory
         """
     http_content = get(http).content
+    tmp_file.write(http_content)
 
-    tmp_copy = NamedTemporaryFile(
-        suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=False,
-    )
-    tmp_copy.write(http_content)
-    return tmp_copy.name
+    return tmp_file.name
