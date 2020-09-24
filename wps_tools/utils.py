@@ -172,19 +172,17 @@ def log_handler(
     response.update_status(message, status_percentage=status_percentage)
 
 
-def copy_http_content(http, tmp_file):
+def copy_http_content(http, file):
     """
         This function is implemented to copy the content of a file passed
-        as an http address to a tmporary file.
+        as an http address to a local file.
 
         Parameters:
             http (str): http address containing the desired content
-            tmp_file (tempfile._TemporaryFileWrapper): path to the 
-                temporary file that the content will be copied to
+            file (file object): path to the 
+                file that the content will be copied to
         Returns:
             Path to the copied file in /tmp directory
         """
-    http_content = get(http).content
-    tmp_file.write(http_content)
-
-    return tmp_file.name
+    file.write(get(http).content)
+    return file.name
