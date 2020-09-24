@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 0.1.3
+*2020 Sep 24*
+
+* Add `copy_http_content` function
+
 ## 0.1.2
 *2020 Aug 12*
 
