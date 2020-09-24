@@ -6,12 +6,15 @@ from wps_tools.utils import (
     get_filepaths,
     collect_output_files,
     build_meta_link,
+    copy_http_content,
 )
 from wps_tools.testing import (
     local_path,
     opendap_path,
 )
 from .processes.wps_test_process import TestProcess
+from netCDF4 import Dataset
+from tempfile import NamedTemporaryFile
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -78,3 +81,23 @@ def test_build_meta_link(outfiles, expected):
         outdir=resource_filename(__name__, "data"),
     )
     assert all([elem in xml for elem in expected])
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("http", "expected"),
+    [
+        (
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/TestData/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc",
+            resource_filename(
+                __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+            ),
+        )
+    ],
+)
+def test_copy_http_content(http, expected):
+    with NamedTemporaryFile(
+        suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True
+    ) as tmp_file:
+        tmp_copy = copy_http_content(http, tmp_file)
+        assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))

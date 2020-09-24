@@ -1,6 +1,6 @@
 # Processor imports
 from pywps import FORMATS, Process
-from requests import head
+from requests import head, get
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from pywps.inout.outputs import MetaLink4, MetaFile
 from pywps.app.exceptions import ProcessError
@@ -170,3 +170,19 @@ def log_handler(
     log_file_path = Path(process.workdir) / log_file_name  # From Finch bird
     log_file_path.open("a", encoding="utf8").write(message + "\n")
     response.update_status(message, status_percentage=status_percentage)
+
+
+def copy_http_content(http, file):
+    """
+        This function is implemented to copy the content of a file passed
+        as an http address to a local file.
+
+        Parameters:
+            http (str): http address containing the desired content
+            file (file object): path to the 
+                file that the content will be copied to
+        Returns:
+            Path to the copied file in /tmp directory
+        """
+    file.write(get(http).content)
+    return file.name
