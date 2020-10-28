@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 0.2.0
+*2020 Oct 28*
+
+* Add notebook url targeting method
+
 ## 0.1.3
 *2020 Sep 24*
 
