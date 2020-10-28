@@ -50,7 +50,7 @@ def opendap_path(file_name):
     Returns:
         str: OpenDAP url
     """
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/TestData/{file_name}"
+    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/projects/comp_support/daccs/{file_name}"
 
 
 def client_for(service):
