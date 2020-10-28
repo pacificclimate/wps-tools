@@ -1,9 +1,11 @@
 import pytest
+import os
 
 from wps_tools.testing import (
     local_path,
     opendap_path,
     run_wps_process,
+    get_target_url,
 )
 from .processes.wps_test_process import TestProcess
 
@@ -27,3 +29,26 @@ def test_opendap_path(nc_file):
 def test_run_wps_process(string):
     params = f"string={string}"
     run_wps_process(TestProcess(), params)
+
+
+@pytest.mark.parametrize(
+    "bird", [("thunderbird"), ("sandpiper"), ("osprey"), ("chickadee"),]
+)
+@pytest.mark.parametrize("expected", ["http://localhost:5000/wps"])
+def test_get_target_url_local(mock_local_url, bird, expected):
+    assert get_target_url(bird) == expected
+
+
+@pytest.mark.parametrize(
+    "bird", [("thunderbird"), ("sandpiper"), ("osprey"), ("chickadee"),]
+)
+@pytest.mark.parametrize("expected", ["http://docker-dev03.pcic.uvic.ca/somebird"])
+def test_get_target_url_dev(mock_dev_url, bird, expected):
+    assert get_target_url(bird) == expected
+
+
+@pytest.mark.parametrize(
+    "bird", [("thunderbird"), ("sandpiper"), ("osprey"), ("chickadee"),]
+)
+def test_get_target_url(bird):
+    assert bird in get_target_url(bird)
