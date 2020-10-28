@@ -88,7 +88,7 @@ def test_build_meta_link(outfiles, expected):
     ("http", "expected"),
     [
         (
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/TestData/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc",
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/projects/comp_support/daccs/test-data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc",
             resource_filename(
                 __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
             ),

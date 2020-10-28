@@ -18,7 +18,9 @@ def test_local_path(nc_file):
 @pytest.mark.online
 @pytest.mark.parametrize(("nc_file"), [nc_file])
 def test_opendap_path(nc_file):
-    assert f"datasets/TestData/{nc_file}" in opendap_path(nc_file)
+    assert "/datasets/storage/data/projects/comp_support/" in opendap_path(
+        nc_file
+    ) and nc_file in opendap_path(nc_file)
 
 
 @pytest.mark.parametrize(("string"), ["Hello"])
