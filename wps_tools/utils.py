@@ -12,8 +12,79 @@ from nchelpers import CFDataset
 import logging
 import os
 from pathlib import Path
+from urllib.parse import urlparse
+from urllib.request import urlretrieve
+from collections import OrderedDict
 
 MAX_OCCURS = 1000
+
+common_status_percentages = {
+    "start": 0,
+    "process": 20,
+    "build_output": 95,
+    "complete": 100,
+}
+
+
+def url_handler(workdir, url):
+    """Handles URL based on its type
+
+    A process cannot access to the data from an http URL without downloading
+    while OPeNDAP URL can be treated as a filepath.
+    The function returns the given URL if it is an OPeNDAP path.
+    Otherwise, data from the http URL are copied to a file created in workdir,
+    and the path to the file is returned.
+
+    Parameters:
+        workdir (str): Path to the workdir
+        url (str): URL to be handled
+
+    Returns:
+        url/local_file (str): URL/filepath with accessible data
+    """
+    if is_opendap_url(url):
+        # OPeNDAP
+        return url
+    elif urlparse(url).scheme and urlparse(url).netloc:
+        # HTTP or other
+        local_file = os.path.join(workdir, url.split("/")[-1])
+        urlretrieve(url, local_file)
+        return local_file
+
+
+def collect_args(request, workdir):
+    """Collects PyWPS input arguments
+
+    There are 3 ways to retrieve PyWPS input arguments depending on their types:
+        .data is used to retrieve the data provided as LiteralInput
+        .url is used to retrieve the URL path to the input provided as ComplexInput
+        .file is used to retrieve the filepath to the input provided as ComplexInput
+
+    The function collects and returns the retrieved arguments in an OrderedDict for
+    versatility. Items are ordered in the sequence of "inputs" list of a process
+
+    Parameters:
+        request (pywps.app.WPSRequest.WPSRequest): PyWPS request that carries inputs
+        workdir (str): Path to the workdir
+
+    Returns:
+        args (OrderedDict): keys are identifiers and values are input arguments
+    """
+    args = OrderedDict()
+    for k in request.inputs.keys():
+        if "data_type" in vars(request.inputs[k][0]).keys():
+            # LiteralData
+            args[request.inputs[k][0].identifier] = request.inputs[k][0].data
+        elif vars(request.inputs[k][0])["_url"] != None:
+            # OPeNDAP or http
+            args[request.inputs[k][0].identifier] = url_handler(
+                workdir, request.inputs[k][0].url
+            )
+        elif os.path.isfile(request.inputs[k][0].file):
+            # Local files
+            args[request.inputs[k][0].identifier] = request.inputs[k][0].file
+
+    return args
 
 
 def is_opendap_url(url):  # From Finch bird
