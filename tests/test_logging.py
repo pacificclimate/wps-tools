@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 from pkg_resources import resource_filename
 from wps_tools.utils import log_handler
 from .common import TestResponse
-from .processes.wps_test_process import TestProcess
+from .test_processes.wps_test_process import TestProcess
 
 logger = logging.getLogger()
 

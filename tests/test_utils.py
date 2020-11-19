@@ -7,14 +7,17 @@ from wps_tools.utils import (
     collect_output_files,
     build_meta_link,
     copy_http_content,
+    url_handler,
 )
 from wps_tools.testing import (
     local_path,
     opendap_path,
 )
-from .processes.wps_test_process import TestProcess
 from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
+from .test_processes.wps_test_collect_args import TestCollectArgs
+from wps_tools.testing import run_wps_process
+from os import path, remove
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -101,3 +104,44 @@ def test_copy_http_content(http, expected):
     ) as tmp_file:
         tmp_copy = copy_http_content(http, tmp_file)
         assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))
+
+
+@pytest.mark.parametrize(
+    ("url_type", "url"),
+    [
+        (
+            "http",
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/projects/comp_support/daccs/test-data/tiny_gcm_climos.nc",
+        ),
+        (
+            "opendap",
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/projects/comp_support/daccs/test-data/tiny_gcm_climos.nc",
+        ),
+    ],
+)
+def test_url_handler(url_type, url):
+    processed = url_handler("/tmp", url)
+    if url_type == "http":
+        assert path.exists(processed)
+        remove(processed)
+    elif url_type == "opendap":
+        assert is_opendap_url(processed)
+
+
+@pytest.mark.parametrize(
+    ("local_file", "opendap_url", "argc"),
+    [
+        (
+            f"file://{resource_filename(__name__, 'data/tiny_daily_pr.nc')}",
+            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/projects/comp_support/daccs/test-data/tiny_gcm_climos.nc",
+            3,
+        )
+    ],
+)
+def test_collect_args(local_file, opendap_url, argc):
+    params = (
+        f"local_file=@xlink:href={local_file};"
+        f"opendap_url=@xlink:href={opendap_url};"
+        f"argc={argc};"
+    )
+    run_wps_process(TestCollectArgs(), params)

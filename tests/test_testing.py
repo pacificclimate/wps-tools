@@ -7,7 +7,7 @@ from wps_tools.testing import (
     run_wps_process,
     get_target_url,
 )
-from .processes.wps_test_process import TestProcess
+from .test_processes.wps_test_process import TestProcess
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 
