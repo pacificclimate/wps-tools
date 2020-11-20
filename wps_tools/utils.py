@@ -29,10 +29,10 @@ common_status_percentages = {
 def url_handler(workdir, url):
     """Handles URL based on its type
 
-    A process cannot access to the data from an http URL without downloading
+    A process cannot access to the data from an HTTPServer URL without downloading
     while OPeNDAP URL can be treated as a filepath.
     The function returns the given URL if it is an OPeNDAP path.
-    Otherwise, data from the http URL are copied to a file created in workdir,
+    Otherwise, data from the HTTPServer URL are copied to a file created in workdir,
     and the path to the file is returned.
 
     Parameters:
@@ -46,7 +46,7 @@ def url_handler(workdir, url):
         # OPeNDAP
         return url
     elif urlparse(url).scheme and urlparse(url).netloc:
-        # HTTP or other
+        # HTTPServer or other
         local_file = os.path.join(workdir, url.split("/")[-1])
         urlretrieve(url, local_file)
         return local_file
@@ -76,7 +76,7 @@ def collect_args(request, workdir):
             # LiteralData
             args[request.inputs[k][0].identifier] = request.inputs[k][0].data
         elif vars(request.inputs[k][0])["_url"] != None:
-            # OPeNDAP or http
+            # OPeNDAP or HTTPServer
             args[request.inputs[k][0].identifier] = url_handler(
                 workdir, request.inputs[k][0].url
             )

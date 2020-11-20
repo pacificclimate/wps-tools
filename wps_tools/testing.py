@@ -54,6 +54,18 @@ def opendap_path(sub_filepath):
     return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/{sub_filepath}"
 
 
+def http_server_path(sub_filepath):
+    """Return HTTPServer url for a file located under /storage/data
+
+    Parameters:
+        sub_filepath (str): Sub filepath
+
+    Returns:
+        str: HTTPServer url
+    """
+    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/{sub_filepath}"
+
+
 def client_for(service):
     """Create WPS client to run process
 
