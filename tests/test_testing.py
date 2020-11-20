@@ -7,7 +7,6 @@ from wps_tools.testing import (
     run_wps_process,
     get_target_url,
 )
-from .test_processes.wps_test_process import TestProcess
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 remote_directory = "projects/comp_support/daccs/test-data"
@@ -34,9 +33,9 @@ def test_opendap_path(nc_file, url_type):
 
 
 @pytest.mark.parametrize(("string"), ["Hello"])
-def test_run_wps_process(string):
+def test_run_wps_process(wps_test_process, string):
     params = f"string={string}"
-    run_wps_process(TestProcess(), params)
+    run_wps_process(wps_test_process, params)
 
 
 @pytest.mark.parametrize(

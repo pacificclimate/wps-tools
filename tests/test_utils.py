@@ -15,7 +15,6 @@ from wps_tools.testing import (
 )
 from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
-from .test_processes.wps_test_collect_args import TestCollectArgs
 from wps_tools.testing import run_wps_process
 from os import path, remove
 
@@ -142,7 +141,7 @@ def test_url_handler(url_type, url):
         )
     ],
 )
-def test_collect_args(netcdfs, opendaps, argc):
+def test_collect_args(wps_test_collect_args, netcdfs, opendaps, argc):
     params = (
         ";".join(
             [f"local_file={nc}" for nc in netcdfs]
@@ -150,4 +149,4 @@ def test_collect_args(netcdfs, opendaps, argc):
         )
         + f";argc={argc};"
     )
-    run_wps_process(TestCollectArgs(), params)
+    run_wps_process(wps_test_collect_args, params)
