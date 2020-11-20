@@ -42,28 +42,23 @@ def local_path(sub_filepath):
     return f"file:///{resource_filename('tests', 'data/' + sub_filepath)}"
 
 
-def opendap_path(sub_filepath):
-    """Return OpenDAP url for a file located under /storage/data
+def url_path(sub_filepath, url_type):
+    """Return url for a file located under /storage/data
 
     Parameters:
         sub_filepath (str): Sub filepath
+        url_type (str):  opendap/http
 
     Returns:
-        str: OpenDAP url
+        str: Full url
     """
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/{sub_filepath}"
-
-
-def http_server_path(sub_filepath):
-    """Return HTTPServer url for a file located under /storage/data
-
-    Parameters:
-        sub_filepath (str): Sub filepath
-
-    Returns:
-        str: HTTPServer url
-    """
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/{sub_filepath}"
+    if url_type == "opendap":
+        identifier = "dodC"
+    elif url_type == "http":
+        identifier = "fileserver"
+    else:
+        raise ValueError(f'Invalid url_type argument "{url_type}"')
+    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/{sub_filepath}"
 
 
 def client_for(service):
