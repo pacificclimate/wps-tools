@@ -12,6 +12,7 @@ from wps_tools.utils import (
 from wps_tools.testing import (
     local_path,
     opendap_path,
+    http_server_path,
 )
 from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
@@ -23,11 +24,12 @@ NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+remote_directory = "projects/comp_support/daccs/test-data"
 
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("url"), [opendap_path(nc_file), local_path(nc_file),],
+    ("url"), [opendap_path(path.join(remote_directory, nc_file)), local_path(nc_file),],
 )
 def test_is_opendap_url(url):
     if "docker" in url:
@@ -43,8 +45,11 @@ def test_is_opendap_url(url):
     ("nc_input"),
     [
         [NCInput(file=local_path(nc_file))],
-        [NCInput(url=opendap_path(nc_file))],
-        [NCInput(file=local_path(nc_file)), NCInput(url=opendap_path(nc_file))],
+        [NCInput(url=opendap_path(path.join(remote_directory, nc_file)))],
+        [
+            NCInput(file=local_path(nc_file)),
+            NCInput(url=opendap_path(path.join(remote_directory, nc_file))),
+        ],
     ],
 )
 def test_get_filepaths(nc_input):
@@ -91,11 +96,11 @@ def test_build_meta_link(outfiles, expected):
     ("http", "expected"),
     [
         (
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/projects/comp_support/daccs/test-data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc",
+            http_server_path(path.join(remote_directory, nc_file)),
             resource_filename(
                 __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
             ),
-        )
+        ),
     ],
 )
 def test_copy_http_content(http, expected):
@@ -109,14 +114,8 @@ def test_copy_http_content(http, expected):
 @pytest.mark.parametrize(
     ("url_type", "url"),
     [
-        (
-            "http",
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/projects/comp_support/daccs/test-data/tiny_gcm_climos.nc",
-        ),
-        (
-            "opendap",
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/projects/comp_support/daccs/test-data/tiny_gcm_climos.nc",
-        ),
+        ("http", http_server_path(path.join(remote_directory, nc_file)),),
+        ("opendap", opendap_path(path.join(remote_directory, nc_file)),),
     ],
 )
 def test_url_handler(url_type, url):
@@ -130,13 +129,7 @@ def test_url_handler(url_type, url):
 
 @pytest.mark.parametrize(
     ("local_file", "opendap_url", "argc"),
-    [
-        (
-            f"file://{resource_filename(__name__, 'data/tiny_daily_pr.nc')}",
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/projects/comp_support/daccs/test-data/tiny_gcm_climos.nc",
-            3,
-        )
-    ],
+    [(local_path(nc_file), opendap_path(path.join(remote_directory, nc_file)), 3,)],
 )
 def test_collect_args(local_file, opendap_url, argc):
     params = (
