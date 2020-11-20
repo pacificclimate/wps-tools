@@ -111,6 +111,7 @@ def test_copy_http_content(http, expected):
         assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))
 
 
+@pytest.mark.online
 @pytest.mark.parametrize(
     ("url_type", "url"),
     [
@@ -127,6 +128,7 @@ def test_url_handler(url_type, url):
         assert is_opendap_url(processed)
 
 
+@pytest.mark.online
 @pytest.mark.parametrize(
     ("local_file", "opendap_url", "argc"),
     [(local_path(nc_file), opendap_path(path.join(remote_directory, nc_file)), 3,)],
