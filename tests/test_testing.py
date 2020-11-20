@@ -4,12 +4,14 @@ import os
 from wps_tools.testing import (
     local_path,
     opendap_path,
+    http_server_path,
     run_wps_process,
     get_target_url,
 )
 from .test_processes.wps_test_process import TestProcess
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+remote_directory = "projects/comp_support/daccs/test-data"
 
 
 @pytest.mark.parametrize(("nc_file"), [nc_file])
@@ -21,8 +23,16 @@ def test_local_path(nc_file):
 @pytest.mark.parametrize(("nc_file"), [nc_file])
 def test_opendap_path(nc_file):
     assert "/datasets/storage/data/projects/comp_support/" in opendap_path(
-        nc_file
-    ) and nc_file in opendap_path(nc_file)
+        os.path.join(remote_directory, nc_file)
+    ) and nc_file in opendap_path(os.path.join(remote_directory, nc_file))
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(("nc_file"), [nc_file])
+def test_http_server_path(nc_file):
+    assert "/datasets/storage/data/projects/comp_support/" in http_server_path(
+        os.path.join(remote_directory, nc_file)
+    ) and nc_file in http_server_path(os.path.join(remote_directory, nc_file))
 
 
 @pytest.mark.parametrize(("string"), ["Hello"])
