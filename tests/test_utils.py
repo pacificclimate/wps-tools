@@ -130,19 +130,24 @@ def test_url_handler(url_type, url):
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("local_file", "opendap_url", "argc"),
+    ("netcdfs", "opendaps", "argc"),
     [
         (
-            local_path(nc_file),
-            url_path(path.join(remote_directory, nc_file), "opendap"),
-            3,
+            [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
+            [
+                url_path(path.join(remote_directory, "tiny_daily_pr.nc"), "opendap"),
+                url_path(path.join(remote_directory, "tiny_daily_prsn"), "opendap"),
+            ],
+            5,
         )
     ],
 )
-def test_collect_args(local_file, opendap_url, argc):
+def test_collect_args(netcdfs, opendaps, argc):
     params = (
-        f"local_file={local_file};"
-        f"opendap_url=@xlink:href={opendap_url};"
-        f"argc={argc};"
+        ";".join(
+            [f"local_file={nc}" for nc in netcdfs]
+            + [f"opendap_url=@xlink:href={od}" for od in opendaps]
+        )
+        + f";argc={argc};"
     )
     run_wps_process(TestCollectArgs(), params)

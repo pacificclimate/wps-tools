@@ -11,18 +11,21 @@ class TestCollectArgs(Process):
             ComplexInput(
                 "local_file",
                 "Local file",
+                max_occurs=5,
                 abstract="Path to the local input file",
                 supported_formats=[FORMATS.NETCDF],
             ),
             ComplexInput(
                 "opendap_url",
                 "OPeNDAP URL",
+                max_occurs=5,
                 abstract="URL to the opendap input file",
                 supported_formats=[FORMATS.DODS],
             ),
             LiteralInput(
                 "argc",
                 "Argument count",
+                max_occurs=5,
                 abstract="Number of input arguments",
                 data_type="integer",
             ),
@@ -47,10 +50,9 @@ class TestCollectArgs(Process):
             status_supported=True,
         )
 
-    @staticmethod
-    def _handler(request, response):
-        collected = collect_args(request, "/tmp")
-        collected_argc = len(collected)
+    def _handler(self, request, response):
+        collected = collect_args(request, self.workdir)
+        collected_argc = sum([len(collected[k]) for k in collected.keys()])
 
         assert collected_argc == request.inputs["argc"][0].data
 
