@@ -140,7 +140,7 @@ def test_url_handler(url_type, url):
 )
 def test_collect_args(local_file, opendap_url, argc):
     params = (
-        f"local_file=@xlink:href={local_file};"
+        f"local_file={local_file};"
         f"opendap_url=@xlink:href={opendap_url};"
         f"argc={argc};"
     )

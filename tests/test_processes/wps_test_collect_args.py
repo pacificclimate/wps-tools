@@ -49,9 +49,9 @@ class TestCollectArgs(Process):
 
     @staticmethod
     def _handler(request, response):
-        collected = collect_args(request)
+        collected = collect_args(request, "/tmp")
         collected_argc = len(collected)
-        
+
         assert collected_argc == request.inputs["argc"][0].data
 
         response.outputs["collected_argc"].data = collected_argc
