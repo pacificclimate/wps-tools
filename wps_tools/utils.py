@@ -74,15 +74,20 @@ def collect_args(request, workdir):
     for k in request.inputs.keys():
         if "data_type" in vars(request.inputs[k][0]).keys():
             # LiteralData
-            args[request.inputs[k][0].identifier] = request.inputs[k][0].data
+            args[request.inputs[k][0].identifier] = [
+                request.inputs[k][i].data for i in range(0, len(request.inputs[k]))
+            ]
         elif vars(request.inputs[k][0])["_url"] != None:
             # OPeNDAP or HTTPServer
-            args[request.inputs[k][0].identifier] = url_handler(
-                workdir, request.inputs[k][0].url
-            )
+            args[request.inputs[k][0].identifier] = [
+                url_handler(workdir, request.inputs[k][i].url)
+                for i in range(0, len(request.inputs[k]))
+            ]
         elif os.path.isfile(request.inputs[k][0].file):
             # Local files
-            args[request.inputs[k][0].identifier] = request.inputs[k][0].file
+            args[request.inputs[k][0].identifier] = [
+                request.inputs[k][0].file for i in range(0, len(request.inputs[k]))
+            ]
 
     return args
 
