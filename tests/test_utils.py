@@ -11,8 +11,7 @@ from wps_tools.utils import (
 )
 from wps_tools.testing import (
     local_path,
-    opendap_path,
-    http_server_path,
+    url_path,
 )
 from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
@@ -29,7 +28,8 @@ remote_directory = "projects/comp_support/daccs/test-data"
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("url"), [opendap_path(path.join(remote_directory, nc_file)), local_path(nc_file),],
+    ("url"),
+    [url_path(path.join(remote_directory, nc_file), "opendap"), local_path(nc_file),],
 )
 def test_is_opendap_url(url):
     if "docker" in url:
@@ -45,10 +45,10 @@ def test_is_opendap_url(url):
     ("nc_input"),
     [
         [NCInput(file=local_path(nc_file))],
-        [NCInput(url=opendap_path(path.join(remote_directory, nc_file)))],
+        [NCInput(url=url_path(path.join(remote_directory, nc_file), "opendap"))],
         [
             NCInput(file=local_path(nc_file)),
-            NCInput(url=opendap_path(path.join(remote_directory, nc_file))),
+            NCInput(url=url_path(path.join(remote_directory, nc_file), "opendap")),
         ],
     ],
 )
@@ -96,7 +96,7 @@ def test_build_meta_link(outfiles, expected):
     ("http", "expected"),
     [
         (
-            http_server_path(path.join(remote_directory, nc_file)),
+            url_path(path.join(remote_directory, nc_file), "http"),
             resource_filename(
                 __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
             ),
@@ -115,8 +115,8 @@ def test_copy_http_content(http, expected):
 @pytest.mark.parametrize(
     ("url_type", "url"),
     [
-        ("http", http_server_path(path.join(remote_directory, nc_file)),),
-        ("opendap", opendap_path(path.join(remote_directory, nc_file)),),
+        ("http", url_path(path.join(remote_directory, nc_file), "http"),),
+        ("opendap", url_path(path.join(remote_directory, nc_file), "opendap"),),
     ],
 )
 def test_url_handler(url_type, url):
@@ -131,7 +131,13 @@ def test_url_handler(url_type, url):
 @pytest.mark.online
 @pytest.mark.parametrize(
     ("local_file", "opendap_url", "argc"),
-    [(local_path(nc_file), opendap_path(path.join(remote_directory, nc_file)), 3,)],
+    [
+        (
+            local_path(nc_file),
+            url_path(path.join(remote_directory, nc_file), "opendap"),
+            3,
+        )
+    ],
 )
 def test_collect_args(local_file, opendap_url, argc):
     params = (

@@ -53,9 +53,9 @@ def url_path(sub_filepath, url_type):
         str: Full url
     """
     if url_type == "opendap":
-        identifier = "dodC"
+        identifier = "dodsC"
     elif url_type == "http":
-        identifier = "fileserver"
+        identifier = "fileServer"
     else:
         raise ValueError(f'Invalid url_type argument "{url_type}"')
     return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/{sub_filepath}"
