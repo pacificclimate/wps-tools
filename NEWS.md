@@ -1,5 +1,11 @@
 # News / Release Notes
 
+## 0.3.0
+*2020 Nov 23*
+
+* Add `url_hanlder` and `collect_args` functions
+* Add `common_status_percentages` dictionary object
+
 ## 0.2.0
 *2020 Oct 28*
 
