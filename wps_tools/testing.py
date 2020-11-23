@@ -30,28 +30,35 @@ class WpsTestClient(WpsClient):
         return super(WpsTestClient, self).get(query)
 
 
-def local_path(file_name):
-    """Return absolute path of file in tests/data directory
+def local_path(sub_filepath):
+    """Return absolute path of file located under tests/data directory
 
     Parameters:
-        file_name (str): File name
+        sub_filepath (str): Sub filepath
 
     Returns:
         str: Absolute local file path
     """
-    return f"file:///{resource_filename('tests', 'data/' + file_name)}"
+    return f"file:///{resource_filename('tests', 'data/' + sub_filepath)}"
 
 
-def opendap_path(file_name):
-    """Return OpenDAP url for file
+def url_path(sub_filepath, url_type):
+    """Return url for a file located under /storage/data
 
     Parameters:
-        file_name (str): File name
+        sub_filepath (str): Sub filepath
+        url_type (str):  opendap/http
 
     Returns:
-        str: OpenDAP url
+        str: Full url
     """
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/dodsC/datasets/storage/data/projects/comp_support/daccs/{file_name}"
+    if url_type == "opendap":
+        identifier = "dodsC"
+    elif url_type == "http":
+        identifier = "fileServer"
+    else:
+        raise ValueError(f'Invalid url_type argument "{url_type}"')
+    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/{sub_filepath}"
 
 
 def client_for(service):

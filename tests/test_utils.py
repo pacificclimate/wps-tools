@@ -7,24 +7,28 @@ from wps_tools.utils import (
     collect_output_files,
     build_meta_link,
     copy_http_content,
+    url_handler,
 )
 from wps_tools.testing import (
     local_path,
-    opendap_path,
+    url_path,
 )
-from .processes.wps_test_process import TestProcess
 from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
+from wps_tools.testing import run_wps_process
+from os import path, remove
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+remote_directory = "projects/comp_support/daccs/test-data"
 
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("url"), [opendap_path(nc_file), local_path(nc_file),],
+    ("url"),
+    [url_path(path.join(remote_directory, nc_file), "opendap"), local_path(nc_file),],
 )
 def test_is_opendap_url(url):
     if "docker" in url:
@@ -40,8 +44,11 @@ def test_is_opendap_url(url):
     ("nc_input"),
     [
         [NCInput(file=local_path(nc_file))],
-        [NCInput(url=opendap_path(nc_file))],
-        [NCInput(file=local_path(nc_file)), NCInput(url=opendap_path(nc_file))],
+        [NCInput(url=url_path(path.join(remote_directory, nc_file), "opendap"))],
+        [
+            NCInput(file=local_path(nc_file)),
+            NCInput(url=url_path(path.join(remote_directory, nc_file), "opendap")),
+        ],
     ],
 )
 def test_get_filepaths(nc_input):
@@ -88,11 +95,11 @@ def test_build_meta_link(outfiles, expected):
     ("http", "expected"),
     [
         (
-            "https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/fileServer/datasets/storage/data/projects/comp_support/daccs/test-data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc",
+            url_path(path.join(remote_directory, nc_file), "http"),
             resource_filename(
                 __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
             ),
-        )
+        ),
     ],
 )
 def test_copy_http_content(http, expected):
@@ -101,3 +108,45 @@ def test_copy_http_content(http, expected):
     ) as tmp_file:
         tmp_copy = copy_http_content(http, tmp_file)
         assert dir(Dataset(tmp_copy)) == dir(Dataset(expected))
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("url_type", "url"),
+    [
+        ("http", url_path(path.join(remote_directory, nc_file), "http"),),
+        ("opendap", url_path(path.join(remote_directory, nc_file), "opendap"),),
+    ],
+)
+def test_url_handler(url_type, url):
+    processed = url_handler("/tmp", url)
+    if url_type == "http":
+        assert path.exists(processed)
+        remove(processed)
+    elif url_type == "opendap":
+        assert is_opendap_url(processed)
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("netcdfs", "opendaps", "argc"),
+    [
+        (
+            [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
+            [
+                url_path(path.join(remote_directory, "tiny_daily_pr.nc"), "opendap"),
+                url_path(path.join(remote_directory, "tiny_daily_prsn"), "opendap"),
+            ],
+            5,
+        )
+    ],
+)
+def test_collect_args(wps_test_collect_args, netcdfs, opendaps, argc):
+    params = (
+        ";".join(
+            [f"local_file={nc}" for nc in netcdfs]
+            + [f"opendap_url=@xlink:href={od}" for od in opendaps]
+        )
+        + f";argc={argc};"
+    )
+    run_wps_process(wps_test_collect_args, params)
