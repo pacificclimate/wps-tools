@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 0.3.1
+*2020 Nov 26*
+
+* Update `url_path` with new data storage location
+
 ## 0.3.0
 *2020 Nov 23*
 
