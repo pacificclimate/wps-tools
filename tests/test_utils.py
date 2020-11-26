@@ -22,13 +22,12 @@ NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
-remote_directory = "projects/comp_support/daccs/test-data"
 
 
 @pytest.mark.online
 @pytest.mark.parametrize(
     ("url"),
-    [url_path(path.join(remote_directory, nc_file), "opendap"), local_path(nc_file),],
+    [url_path(nc_file, "opendap"), local_path(nc_file),],
 )
 def test_is_opendap_url(url):
     if "docker" in url:
@@ -44,10 +43,10 @@ def test_is_opendap_url(url):
     ("nc_input"),
     [
         [NCInput(file=local_path(nc_file))],
-        [NCInput(url=url_path(path.join(remote_directory, nc_file), "opendap"))],
+        [NCInput(url=url_path(nc_file, "opendap"))],
         [
             NCInput(file=local_path(nc_file)),
-            NCInput(url=url_path(path.join(remote_directory, nc_file), "opendap")),
+            NCInput(url=url_path(nc_file, "opendap")),
         ],
     ],
 )
@@ -95,7 +94,7 @@ def test_build_meta_link(outfiles, expected):
     ("http", "expected"),
     [
         (
-            url_path(path.join(remote_directory, nc_file), "http"),
+            url_path(nc_file, "http"),
             resource_filename(
                 __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
             ),
@@ -103,6 +102,7 @@ def test_build_meta_link(outfiles, expected):
     ],
 )
 def test_copy_http_content(http, expected):
+    print(http)
     with NamedTemporaryFile(
         suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True
     ) as tmp_file:
@@ -114,8 +114,8 @@ def test_copy_http_content(http, expected):
 @pytest.mark.parametrize(
     ("url_type", "url"),
     [
-        ("http", url_path(path.join(remote_directory, nc_file), "http"),),
-        ("opendap", url_path(path.join(remote_directory, nc_file), "opendap"),),
+        ("http", url_path(nc_file, "http")),
+        ("opendap", url_path(nc_file, "opendap")),
     ],
 )
 def test_url_handler(url_type, url):
@@ -134,8 +134,8 @@ def test_url_handler(url_type, url):
         (
             [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
             [
-                url_path(path.join(remote_directory, "tiny_daily_pr.nc"), "opendap"),
-                url_path(path.join(remote_directory, "tiny_daily_prsn"), "opendap"),
+                url_path("tiny_daily_pr.nc", "opendap"),
+                url_path("tiny_daily_prsn", "opendap"),
             ],
             5,
         )
