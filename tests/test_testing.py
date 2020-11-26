@@ -9,7 +9,7 @@ from wps_tools.testing import (
 )
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
-remote_directory = "projects/comp_support"
+remote_directory = "projects/comp_support/daccs/test-data"
 
 
 @pytest.mark.parametrize(("nc_file"), [nc_file])
@@ -26,7 +26,7 @@ def test_local_path(nc_file):
         (nc_file, "opendap", "climate_explorer_data_prep"),
     ],
 )
-def test_url_path(nc_file, url_type, sub_dir):
+def test_opendap_path(nc_file, url_type, sub_dir):
     if url_type == "opendap":
         assert (
             f"dodsC/datasets/storage/data/projects/comp_support/{sub_dir}"

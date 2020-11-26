@@ -98,7 +98,6 @@ def test_build_meta_link(outfiles, expected):
     ],
 )
 def test_copy_http_content(http, expected):
-    print(http)
     with NamedTemporaryFile(
         suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True
     ) as tmp_file:
