@@ -42,7 +42,7 @@ def local_path(sub_filepath):
     return f"file:///{resource_filename('tests', 'data/' + sub_filepath)}"
 
 
-def url_path(sub_filepath, url_type):
+def url_path(sub_filepath, url_type, sub_dir="daccs"):
     """Return url for a file located under /storage/data
 
     Parameters:
@@ -58,7 +58,17 @@ def url_path(sub_filepath, url_type):
         identifier = "fileServer"
     else:
         raise ValueError(f'Invalid url_type argument "{url_type}"')
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/{sub_filepath}"
+
+    if sub_dir == "daccs":
+        path = "daccs/test-data"
+    elif sub_dir == "climate_explorer_data_prep":
+        path = "climate_explorer_data_prep/hydro/sample_data/set4"
+    else:
+        raise ValueError(
+            f'Invalid sub directory "{sub_dir}": must be one of "daccs" or "climate_explorer_data_prep"'
+        )
+
+    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/projects/comp_support/{path}/{sub_filepath}"
 
 
 def client_for(service):

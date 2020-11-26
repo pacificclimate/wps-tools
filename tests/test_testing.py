@@ -19,16 +19,23 @@ def test_local_path(nc_file):
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("nc_file", "url_type"), [(nc_file, "opendap"), (nc_file, "http"),]
+    ("nc_file", "url_type", "sub_dir"),
+    [
+        (nc_file, "opendap", "daccs"),
+        (nc_file, "http", "daccs"),
+        (nc_file, "opendap", "climate_explorer_data_prep"),
+    ],
 )
-def test_opendap_path(nc_file, url_type):
+def test_url_path(nc_file, url_type, sub_dir):
     if url_type == "opendap":
-        assert "dodsC/datasets/storage/data/" in url_path(
-            os.path.join(remote_directory, nc_file), url_type
+        assert (
+            f"dodsC/datasets/storage/data/projects/comp_support/{sub_dir}"
+            in url_path(os.path.join(remote_directory, nc_file), url_type, sub_dir)
         )
     elif url_type == "http":
-        assert "fileServer/datasets/storage/data/" in url_path(
-            os.path.join(remote_directory, nc_file), url_type
+        assert (
+            f"fileServer/datasets/storage/data/projects/comp_support/{sub_dir}"
+            in url_path(os.path.join(remote_directory, nc_file), url_type, sub_dir)
         )
 
 
