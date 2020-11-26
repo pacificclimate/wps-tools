@@ -26,7 +26,7 @@ def test_local_path(nc_file):
         (nc_file, "opendap", "climate_explorer_data_prep"),
     ],
 )
-def test_opendap_path(nc_file, url_type, sub_dir):
+def test_url_path(nc_file, url_type, sub_dir):
     if url_type == "opendap":
         assert (
             f"dodsC/datasets/storage/data/projects/comp_support/{sub_dir}"
