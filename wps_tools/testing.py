@@ -59,12 +59,14 @@ def url_path(sub_filepath, url_type, sub_dir="daccs"):
     else:
         raise ValueError(f'Invalid url_type argument "{url_type}"')
 
-    if sub_dir=="daccs":
+    if sub_dir == "daccs":
         path = "daccs/test-data"
-    elif sub_dir=="climate_explorer_data_prep":
+    elif sub_dir == "climate_explorer_data_prep":
         path = "climate_explorer_data_prep/hydro/sample_data/set4"
     else:
-        raise ValueError(f'Invalid sub directory "{sub_dir}": must be one of "daccs" or "climate_explorer_data_prep"')
+        raise ValueError(
+            f'Invalid sub directory "{sub_dir}": must be one of "daccs" or "climate_explorer_data_prep"'
+        )
 
     return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/projects/comp_support/{path}/{sub_filepath}"
 
