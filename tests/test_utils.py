@@ -38,10 +38,7 @@ def test_is_opendap_url(url):
 
 
 @pytest.mark.parametrize(
-    ("nc_input"),
-    [
-        [NCInput(file=local_path(nc_file))]
-    ],
+    ("nc_input"), [[NCInput(file=local_path(nc_file))]],
 )
 def test_get_filepaths_local(nc_input):
     paths = get_filepaths(nc_input)
@@ -133,21 +130,10 @@ def test_url_handler(url_type, url):
 
 @pytest.mark.parametrize(
     ("netcdfs", "argc"),
-    [
-        (
-            [
-                local_path("tiny_daily_pr.nc"),
-                local_path("tiny_daily_prsn.nc"),
-            ],
-            3,
-        )
-    ],
+    [([local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),], 3,)],
 )
 def test_collect_args_local(wps_test_collect_args, netcdfs, argc):
-    params = (
-        ";".join([f"file={nc}" for nc in netcdfs])
-        + f";argc={argc};"
-    )
+    params = ";".join([f"file={nc}" for nc in netcdfs]) + f";argc={argc};"
     run_wps_process(wps_test_collect_args, params)
 
 
@@ -165,8 +151,5 @@ def test_collect_args_local(wps_test_collect_args, netcdfs, argc):
     ],
 )
 def test_collect_args_online(wps_test_collect_args, netcdfs, argc):
-    params = (
-        ";".join([f"file={nc}" for nc in netcdfs])
-        + f";argc={argc};"
-    )
+    params = ";".join([f"file={nc}" for nc in netcdfs]) + f";argc={argc};"
     run_wps_process(wps_test_collect_args, params)
