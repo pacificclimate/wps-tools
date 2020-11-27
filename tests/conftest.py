@@ -23,23 +23,16 @@ class TestCollectArgs(Process):
     def __init__(self):
         inputs = [
             ComplexInput(
-                "local_file",
-                "Local file",
-                max_occurs=5,
-                abstract="Path to the local input file",
-                supported_formats=[FORMATS.NETCDF],
-            ),
-            ComplexInput(
-                "opendap_url",
-                "OPeNDAP URL",
-                max_occurs=5,
-                abstract="URL to the opendap input file",
-                supported_formats=[FORMATS.DODS],
+                "file",
+                "File",
+                max_occurs=3,
+                abstract="Path to the local or online input file",
+                supported_formats=[FORMATS.NETCDF, FORMATS.DODS],
             ),
             LiteralInput(
                 "argc",
                 "Argument count",
-                max_occurs=5,
+                max_occurs=3,
                 abstract="Number of input arguments",
                 data_type="integer",
             ),
