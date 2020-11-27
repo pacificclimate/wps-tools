@@ -23,18 +23,25 @@ class TestCollectArgs(Process):
     def __init__(self):
         inputs = [
             ComplexInput(
-                "file",
-                "File",
-                max_occurs=3,
-                abstract="Path to the local or online input file",
+                "file1",
+                "File 1",
+                max_occurs=2,
+                abstract="Path to a local or online input file",
+                supported_formats=[FORMATS.NETCDF, FORMATS.DODS],
+            ),
+            ComplexInput(
+                "file2",
+                "File 2",
+                max_occurs=2,
+                abstract="Path to another local or online input file",
                 supported_formats=[FORMATS.NETCDF, FORMATS.DODS],
             ),
             LiteralInput(
                 "argc",
-                "Argument count",
-                max_occurs=3,
-                abstract="Number of input arguments",
-                data_type="integer",
+                "Argument count dictionary",
+                max_occurs=1,
+                abstract="Number of input arguments for each input",
+                data_type="string",
             ),
         ]
         outputs = [
@@ -59,10 +66,12 @@ class TestCollectArgs(Process):
 
     def _handler(self, request, response):
         collected = collect_args(request, self.workdir)
+        count_dict = eval(request.inputs["argc"][0].data)
+
+        for input_ in collected.keys():
+            assert len(collected[input_]) == count_dict[input_]
+
         collected_argc = sum([len(collected[k]) for k in collected.keys()])
-
-        assert collected_argc == request.inputs["argc"][0].data
-
         response.outputs["collected_argc"].data = collected_argc
         return response
 
