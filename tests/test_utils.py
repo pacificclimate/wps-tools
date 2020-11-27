@@ -37,19 +37,28 @@ def test_is_opendap_url(url):
         )  # Ensure function recognizes this is not an opendap file
 
 
+@pytest.mark.parametrize(
+    ("nc_input"), [[NCInput(file=local_path(nc_file))]],
+)
+def test_get_filepaths_local(nc_input):
+    paths = get_filepaths(nc_input)
+    assert len(paths) == len(nc_input)
+    for path in paths:
+        assert nc_file in path
+
+
 @pytest.mark.online
 @pytest.mark.parametrize(
     ("nc_input"),
     [
-        [NCInput(file=local_path(nc_file))],
         [NCInput(url=url_path(nc_file, "opendap"))],
         [NCInput(file=local_path(nc_file)), NCInput(url=url_path(nc_file, "opendap")),],
     ],
 )
-def test_get_filepaths(nc_input):
-    for input in nc_input:
-        if input.url != "":
-            assert is_opendap_url(input.url)
+def test_get_filepaths_online(nc_input):
+    for nc in nc_input:
+        if nc.url != "":
+            assert is_opendap_url(nc.url)
 
     paths = get_filepaths(nc_input)
     assert len(paths) == len(nc_input)
@@ -119,26 +128,49 @@ def test_url_handler(url_type, url):
         assert is_opendap_url(processed)
 
 
-@pytest.mark.online
-@pytest.mark.parametrize(
-    ("netcdfs", "opendaps", "argc"),
-    [
-        (
-            [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
-            [
-                url_path("tiny_daily_pr.nc", "opendap"),
-                url_path("tiny_daily_prsn", "opendap"),
-            ],
-            5,
-        )
-    ],
-)
-def test_collect_args(wps_test_collect_args, netcdfs, opendaps, argc):
+def collect_args_test(wps_test_collect_args, file1, file2, argc):
     params = (
         ";".join(
-            [f"local_file={nc}" for nc in netcdfs]
-            + [f"opendap_url=@xlink:href={od}" for od in opendaps]
+            [f"file1={nc}" for nc in file1] + [f"file2={file_}" for file_ in file2]
         )
         + f";argc={argc};"
     )
     run_wps_process(wps_test_collect_args, params)
+
+
+@pytest.mark.parametrize(
+    ("file1", "file2", "argc"),
+    [
+        (
+            [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
+            [local_path("gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc")],
+            {"file1": 2, "file2": 1, "argc": 1},
+        )
+    ],
+)
+def test_collect_args_local(wps_test_collect_args, file1, file2, argc):
+    collect_args_test(wps_test_collect_args, file1, file2, argc)
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("file1", "file2", "argc"),
+    [
+        (
+            [
+                url_path(
+                    "sample.rvic.prm.COLUMBIA.20180516.nc",
+                    "http",
+                    "climate_explorer_data_prep",
+                )
+            ],
+            [
+                url_path("tiny_daily_pr.nc", "opendap"),
+                url_path("tiny_daily_prsn", "opendap"),
+            ],
+            {"file1": 1, "file2": 2, "argc": 1},
+        )
+    ],
+)
+def test_collect_args_online(wps_test_collect_args, file1, file2, argc):
+    collect_args_test(wps_test_collect_args, file1, file2, argc)

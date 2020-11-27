@@ -9,7 +9,6 @@ from wps_tools.testing import (
 )
 
 nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
-remote_directory = "projects/comp_support/daccs/test-data"
 
 
 @pytest.mark.parametrize(("nc_file"), [nc_file])
@@ -30,12 +29,12 @@ def test_url_path(nc_file, url_type, sub_dir):
     if url_type == "opendap":
         assert (
             f"dodsC/datasets/storage/data/projects/comp_support/{sub_dir}"
-            in url_path(os.path.join(remote_directory, nc_file), url_type, sub_dir)
+            in url_path(nc_file, url_type, sub_dir)
         )
     elif url_type == "http":
         assert (
             f"fileServer/datasets/storage/data/projects/comp_support/{sub_dir}"
-            in url_path(os.path.join(remote_directory, nc_file), url_type, sub_dir)
+            in url_path(nc_file, url_type, sub_dir)
         )
 
 
