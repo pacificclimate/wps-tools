@@ -8,6 +8,9 @@ from wps_tools.utils import (
     build_meta_link,
     copy_http_content,
     url_handler,
+    get_package,
+    load_rdata_to_python,
+    save_python_to_rdata,
 )
 from wps_tools.testing import (
     local_path,
@@ -17,6 +20,7 @@ from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
 from wps_tools.testing import run_wps_process
 from os import path, remove
+from pywps.app.exceptions import ProcessError
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -174,3 +178,19 @@ def test_collect_args_local(wps_test_collect_args, file1, file2, argc):
 )
 def test_collect_args_online(wps_test_collect_args, file1, file2, argc):
     collect_args_test(wps_test_collect_args, file1, file2, argc)
+
+
+@pytest.mark.parametrize(
+    ("package"),
+    [("base"), ("utils")],
+)
+def test_get_package(package):
+    pkg = get_package(package)
+    assert pkg.__dict__["__rname__"] == package
+
+
+@pytest.mark.parametrize("package", ["invalid_pkg"])
+def test_get_package_err(package):
+    with pytest.raises(ProcessError) as e:
+        get_package(package)
+        assert str(vars(e)["_excinfo"][1]) == f"R package, {package}, is not installed"
