@@ -296,12 +296,7 @@ def load_rdata_to_python(r_file, r_object_name):
             Exposed R object as a python object
     """
     robjects.r(f"load(file='{r_file}')")
-
-    if robjects.r(f"exists('{r_object_name}')"):
-        return robjects.r(r_object_name)
-    else:
-        raise ProcessError(f"No R object called '{r_object_name}'")
-
+    return robjects.r(r_object_name)
 
 def save_python_to_rdata(r_name, py_var, r_file):
     """

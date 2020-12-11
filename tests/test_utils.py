@@ -21,6 +21,7 @@ from tempfile import NamedTemporaryFile
 from wps_tools.testing import run_wps_process
 from os import path, remove
 from pywps.app.exceptions import ProcessError
+from rpy2 import robjects
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -194,3 +195,17 @@ def test_get_package_err(package):
     with pytest.raises(ProcessError) as e:
         get_package(package)
         assert str(vars(e)["_excinfo"][1]) == f"R package, {package}, is not installed"
+
+
+@pytest.mark.parametrize(
+    ("r_file", "r_object_name"),
+    [
+        (resource_filename(__name__, "data/expected_gsl.rda"), "expected_gsl_vector")
+    ],
+)
+def test_load_rdata_to_python(r_file, r_object_name):
+    r2py_object = load_rdata_to_python(r_file, r_object_name)
+    assert "robjects" in str(type(r2py_object))
+
+
+
