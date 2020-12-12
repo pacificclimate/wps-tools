@@ -182,8 +182,7 @@ def test_collect_args_online(wps_test_collect_args, file1, file2, argc):
 
 
 @pytest.mark.parametrize(
-    ("package"),
-    [("base"), ("utils")],
+    ("package"), [("base"), ("utils")],
 )
 def test_get_package(package):
     pkg = get_package(package)
@@ -199,13 +198,25 @@ def test_get_package_err(package):
 
 @pytest.mark.parametrize(
     ("r_file", "r_object_name"),
-    [
-        (resource_filename(__name__, "data/expected_gsl.rda"), "expected_gsl_vector")
-    ],
+    [(resource_filename(__name__, "data/expected_gsl.rda"), "expected_gsl_vector")],
 )
 def test_load_rdata_to_python(r_file, r_object_name):
     r2py_object = load_rdata_to_python(r_file, r_object_name)
     assert "robjects" in str(type(r2py_object))
 
+    robjects.r("rm(list=ls())")
 
 
+@pytest.mark.parametrize(
+    ("r_name", "py_var"), [("str_ex", "string"), ("int_ex", 300),],
+)
+def test_save_python_to_rdata(r_name, py_var):
+    with NamedTemporaryFile(
+        suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True
+    ) as r_file:
+        save_python_to_rdata(r_name, py_var, r_file)
+        test_var = load_rdata_to_python(r_file, r_name)
+
+    assert test_var[0] == py_var
+
+    robjects.r("rm(list=ls())")
