@@ -214,8 +214,8 @@ def test_save_python_to_rdata(r_name, py_var):
     with NamedTemporaryFile(
         suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True
     ) as r_file:
-        save_python_to_rdata(r_name, py_var, r_file)
-        test_var = load_rdata_to_python(r_file, r_name)
+        save_python_to_rdata(r_name, py_var, r_file.name)
+        test_var = load_rdata_to_python(r_file.name, r_name)
 
     assert test_var[0] == py_var
 
