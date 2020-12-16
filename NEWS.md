@@ -1,5 +1,11 @@
 # News / Release Notes
 
+## 0.4.0
+*2020 Dec 16*
+
+* Add `get_package`, `load_rdata_to_python` and `save_python_to_rdata` functions
+* Add `rda_output` and `vector_name` outputs
+
 ## 0.3.1
 *2020 Nov 26*
 
