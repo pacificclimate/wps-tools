@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 0.4.1
+*2020 Dec 16*
+
+* Fixes io bug with `pywps Format` import
+
 ## 0.4.0
 *2020 Dec 16*
 
