@@ -1,4 +1,4 @@
-from pywps import LiteralInput, ComplexOutput, FORMATS
+from pywps import LiteralInput, ComplexOutput, FORMATS, Format
 
 import logging
 
