@@ -1,5 +1,6 @@
 from pywps import LiteralInput, ComplexOutput, FORMATS, Format
-
+from collections import OrderedDict
+import os
 import logging
 
 log_level = LiteralInput(

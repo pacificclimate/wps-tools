@@ -1,10 +1,9 @@
 import pytest
 from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS
-from wps_tools.utils import collect_args
+from wps_tools.io import collect_args
 import logging
 
 
-@pytest.fixture
 def mock_local_url(monkeypatch):
     monkeypatch.setenv("LOCAL_URL", "http://localhost:5000/wps")
 
