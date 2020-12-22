@@ -2,6 +2,7 @@ from rpy2 import robjects
 from rpy2.robjects.packages import isinstalled, importr
 from pywps.app.exceptions import ProcessError
 
+
 def get_package(package):
     """
         Exposes all R objects in package as Python objects after

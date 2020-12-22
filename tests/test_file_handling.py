@@ -125,4 +125,3 @@ def test_url_handler(url_type, url):
         remove(processed)
     elif url_type == "opendap":
         assert is_opendap_url(processed)
-
