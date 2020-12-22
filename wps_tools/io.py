@@ -69,3 +69,43 @@ vector_name = LiteralInput(
     max_occurs=1,
     data_type="string",
 )
+
+
+def collect_args(request, workdir):
+    """Collects PyWPS input arguments
+
+    There are 3 ways to retrieve PyWPS input arguments depending on their types:
+        .data is used to retrieve the data provided as LiteralInput
+        .url is used to retrieve the URL path to the input provided as ComplexInput
+        .file is used to retrieve the filepath to the input provided as ComplexInput
+
+    The function collects and returns the retrieved arguments in an OrderedDict for
+    versatility. Items are ordered in the sequence of "inputs" list of a process
+
+    Parameters:
+        request (pywps.app.WPSRequest.WPSRequest): PyWPS request that carries inputs
+        workdir (str): Path to the workdir
+
+    Returns:
+        args (OrderedDict): keys are identifiers and values are input arguments
+    """
+    args = OrderedDict()
+    for k in request.inputs.keys():
+        if "data_type" in vars(request.inputs[k][0]).keys():
+            # LiteralData
+            args[request.inputs[k][0].identifier] = [
+                request.inputs[k][i].data for i in range(0, len(request.inputs[k]))
+            ]
+        elif vars(request.inputs[k][0])["_url"] != None:
+            # OPeNDAP or HTTPServer
+            args[request.inputs[k][0].identifier] = [
+                url_handler(workdir, request.inputs[k][i].url)
+                for i in range(0, len(request.inputs[k]))
+            ]
+        elif os.path.isfile(request.inputs[k][0].file):
+            # Local files
+            args[request.inputs[k][0].identifier] = [
+                request.inputs[k][0].file for i in range(0, len(request.inputs[k]))
+            ]
+
+    return args
