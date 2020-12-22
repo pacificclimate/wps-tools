@@ -3,7 +3,7 @@ import logging
 import os
 from tempfile import TemporaryDirectory
 from pkg_resources import resource_filename
-from wps_tools.utils import log_handler
+from wps_tools.logging import log_handler
 from .common import TestResponse
 
 logger = logging.getLogger()

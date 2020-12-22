@@ -1,6 +1,6 @@
 import pytest
 from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS
-from wps_tools.utils import collect_args
+from wps_tools.io import collect_args
 import logging
 
 

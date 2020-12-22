@@ -1,5 +1,5 @@
 # Processor imports
-from pywps import FORMATS, Process
+from pywps import FORMATS
 from requests import head, get
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from pywps.inout.outputs import MetaLink4, MetaFile
@@ -9,23 +9,9 @@ from pywps.app.exceptions import ProcessError
 from nchelpers import CFDataset
 
 # Library imports
-import logging
 import os
-from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
-from collections import OrderedDict
-from rpy2 import robjects
-from rpy2.robjects.packages import isinstalled, importr
-
-MAX_OCCURS = 1000
-
-common_status_percentages = {
-    "start": 0,
-    "process": 20,
-    "build_output": 95,
-    "complete": 100,
-}
 
 
 def url_handler(workdir, url):
@@ -52,46 +38,6 @@ def url_handler(workdir, url):
         local_file = os.path.join(workdir, url.split("/")[-1])
         urlretrieve(url, local_file)
         return local_file
-
-
-def collect_args(request, workdir):
-    """Collects PyWPS input arguments
-
-    There are 3 ways to retrieve PyWPS input arguments depending on their types:
-        .data is used to retrieve the data provided as LiteralInput
-        .url is used to retrieve the URL path to the input provided as ComplexInput
-        .file is used to retrieve the filepath to the input provided as ComplexInput
-
-    The function collects and returns the retrieved arguments in an OrderedDict for
-    versatility. Items are ordered in the sequence of "inputs" list of a process
-
-    Parameters:
-        request (pywps.app.WPSRequest.WPSRequest): PyWPS request that carries inputs
-        workdir (str): Path to the workdir
-
-    Returns:
-        args (OrderedDict): keys are identifiers and values are input arguments
-    """
-    args = OrderedDict()
-    for k in request.inputs.keys():
-        if "data_type" in vars(request.inputs[k][0]).keys():
-            # LiteralData
-            args[request.inputs[k][0].identifier] = [
-                request.inputs[k][i].data for i in range(0, len(request.inputs[k]))
-            ]
-        elif vars(request.inputs[k][0])["_url"] != None:
-            # OPeNDAP or HTTPServer
-            args[request.inputs[k][0].identifier] = [
-                url_handler(workdir, request.inputs[k][i].url)
-                for i in range(0, len(request.inputs[k]))
-            ]
-        elif os.path.isfile(request.inputs[k][0].file):
-            # Local files
-            args[request.inputs[k][0].identifier] = [
-                request.inputs[k][0].file for i in range(0, len(request.inputs[k]))
-            ]
-
-    return args
 
 
 def is_opendap_url(url):  # From Finch bird
@@ -160,7 +106,7 @@ def collect_output_files(varname, outdir=os.getcwd()):
     the given variable name, indicating that these files were outputted
     by the same process. Though the default directory is the current directory,
     it is most often the current WPS process's working directory.
-    
+
     Parameters:
         varname (str): Name of variable (must be in file names)
         outdir (str): Directory containing output files
@@ -214,42 +160,6 @@ def build_meta_link(
     return meta_link.xml
 
 
-def log_handler(
-    process,
-    response,
-    message,
-    logger,
-    log_level="INFO",
-    process_step=None,
-    log_file_name="log.txt",
-):
-    """Output message to logger and update response status
-
-    A message is outputted to a logger and log file at the specified level, and
-    the progress status of the response is updated according to the specified
-    process step. The log file is stored in the process's working directory.
-
-    Parameters:
-        process (pywps.Process): Currently running WPS process
-        response (pywps.WPSResponse): Response object for process
-        message (str): Message to be outputted
-        logger (logging.Logger): Logger to store messages
-        log_level (str): Logging level at which to output message
-        process_step (str): Current stage of process execution
-        log_file_name (str): File to store logger content
-    """
-    if process_step:
-        status_percentage = process.status_percentage_steps[process_step]
-    else:
-        status_percentage = response.status_percentage
-
-    # Log to all sources
-    logger.log(getattr(logging, log_level), message)
-    log_file_path = Path(process.workdir) / log_file_name  # From Finch bird
-    log_file_path.open("a", encoding="utf8").write(message + "\n")
-    response.update_status(message, status_percentage=status_percentage)
-
-
 def copy_http_content(http, file):
     """
         This function is implemented to copy the content of a file passed
@@ -264,49 +174,3 @@ def copy_http_content(http, file):
         """
     file.write(get(http).content)
     return file.name
-
-
-def get_package(package):
-    """
-        Exposes all R objects in package as Python objects after
-        checking that it is installed.
-
-        Parameters:
-            package (str): the name of an R package
-
-        Returns:
-            Exposed R package
-    """
-    if isinstalled(package):
-        return importr(package)
-    else:
-        raise ProcessError(f"R package, {package}, is not installed")
-
-
-def load_rdata_to_python(r_file, r_object_name):
-    """
-        Loads R objects from a .rda or .Rdata file into the embedded R
-        environment, then exposes that object as a Python object.
-
-        Parameters:
-            r_file (str): path to an .rda or .rdata file
-            r_object_name (str): name of an R object from the r_file
-
-        Returns:
-            Exposed R object as a python object
-    """
-    robjects.r(f"load(file='{r_file}')")
-    return robjects.r(r_object_name)
-
-
-def save_python_to_rdata(r_name, py_var, r_file):
-    """
-        Saves a Python object as an R object to a Rdata (.rda) file
-
-        Parameters:
-            r_name (str): name to give the oject in the R environment
-            py_var (any type): python variable to save to the R environment
-            r_file (str): path to rdata file
-    """
-    robjects.r.assign(r_name, py_var)
-    robjects.r(f"save({r_name}, file='{r_file}')")

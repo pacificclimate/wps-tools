@@ -1,16 +1,13 @@
 import pytest
 from pkg_resources import resource_filename
 from collections import namedtuple
-from wps_tools.utils import (
+from wps_tools.file_handling import (
     is_opendap_url,
     get_filepaths,
     collect_output_files,
     build_meta_link,
     copy_http_content,
     url_handler,
-    get_package,
-    load_rdata_to_python,
-    save_python_to_rdata,
 )
 from wps_tools.testing import (
     local_path,
@@ -18,10 +15,7 @@ from wps_tools.testing import (
 )
 from netCDF4 import Dataset
 from tempfile import NamedTemporaryFile
-from wps_tools.testing import run_wps_process
 from os import path, remove
-from pywps.app.exceptions import ProcessError
-from rpy2 import robjects
 
 NCInput = namedtuple("NCInput", ["url", "file"])
 NCInput.__new__.__defaults__ = ("", "")
@@ -131,92 +125,3 @@ def test_url_handler(url_type, url):
         remove(processed)
     elif url_type == "opendap":
         assert is_opendap_url(processed)
-
-
-def collect_args_test(wps_test_collect_args, file1, file2, argc):
-    params = (
-        ";".join(
-            [f"file1={nc}" for nc in file1] + [f"file2={file_}" for file_ in file2]
-        )
-        + f";argc={argc};"
-    )
-    run_wps_process(wps_test_collect_args, params)
-
-
-@pytest.mark.parametrize(
-    ("file1", "file2", "argc"),
-    [
-        (
-            [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
-            [local_path("gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc")],
-            {"file1": 2, "file2": 1, "argc": 1},
-        )
-    ],
-)
-def test_collect_args_local(wps_test_collect_args, file1, file2, argc):
-    collect_args_test(wps_test_collect_args, file1, file2, argc)
-
-
-@pytest.mark.online
-@pytest.mark.parametrize(
-    ("file1", "file2", "argc"),
-    [
-        (
-            [
-                url_path(
-                    "sample.rvic.prm.COLUMBIA.20180516.nc",
-                    "http",
-                    "climate_explorer_data_prep",
-                )
-            ],
-            [
-                url_path("tiny_daily_pr.nc", "opendap"),
-                url_path("tiny_daily_prsn", "opendap"),
-            ],
-            {"file1": 1, "file2": 2, "argc": 1},
-        )
-    ],
-)
-def test_collect_args_online(wps_test_collect_args, file1, file2, argc):
-    collect_args_test(wps_test_collect_args, file1, file2, argc)
-
-
-@pytest.mark.parametrize(
-    ("package"), [("base"), ("utils")],
-)
-def test_get_package(package):
-    pkg = get_package(package)
-    assert pkg.__dict__["__rname__"] == package
-
-
-@pytest.mark.parametrize("package", ["invalid_pkg"])
-def test_get_package_err(package):
-    with pytest.raises(ProcessError) as e:
-        get_package(package)
-        assert str(vars(e)["_excinfo"][1]) == f"R package, {package}, is not installed"
-
-
-@pytest.mark.parametrize(
-    ("r_file", "r_object_name"),
-    [(resource_filename(__name__, "data/expected_gsl.rda"), "expected_gsl_vector")],
-)
-def test_load_rdata_to_python(r_file, r_object_name):
-    r2py_object = load_rdata_to_python(r_file, r_object_name)
-    assert "robjects" in str(type(r2py_object))
-
-    robjects.r("rm(list=ls())")
-
-
-@pytest.mark.parametrize(
-    ("r_name", "py_var"), [("str_ex", "string"), ("int_ex", 300),],
-)
-def test_save_python_to_rdata(r_name, py_var):
-    with NamedTemporaryFile(
-        suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True
-    ) as r_file:
-        save_python_to_rdata(r_name, py_var, r_file.name)
-        test_var = load_rdata_to_python(r_file.name, r_name)
-
-    assert test_var[0] == py_var
-
-    robjects.r("rm(list=ls())")

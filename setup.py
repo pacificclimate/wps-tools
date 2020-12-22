@@ -8,6 +8,8 @@ try:
 except ImportError:
     warn("Could not import sphinx. You won't be able to build the docs")
 
+reqs = [line.strip() for line in open("requirements.txt")]
+
 setup(
     name="wps_tools",
     description="A collection of modules used to help create wps processes",
@@ -22,6 +24,7 @@ setup(
         "tests": ["data/*.nc", "processes/*.py"],
     },
     include_package_data=True,
+    install_requires=reqs,
     cmdclass={"build_sphinx": BuildDoc},
     command_options={
         "build_sphinx": {
