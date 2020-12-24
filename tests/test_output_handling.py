@@ -5,6 +5,7 @@ from wps_tools.output_handling import (
     nc_to_dataset,
     json_to_dict,
     vector_to_dict,
+    txt_to_string,
     get_available_robjects,
 )
 from wps_tools.testing import url_path, local_path
@@ -43,6 +44,22 @@ def test_vector_to_dict(url, vector_name):
 
     assert isinstance(output_dict, dict)
     assert len(output_dict) > 0
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("url"),
+    [
+        (url_path("FileDescription.txt", "http", "climate_explorer_data_prep")),
+        (url_path("sample_pour.txt", "http", "climate_explorer_data_prep")),
+    ],
+)
+def test_txt_to_string(url):
+    output_str = txt_to_string(url)
+
+    assert output_str is not None
+    assert output_str != ""
+    assert isinstance(output_str, str)
 
 
 @pytest.mark.parametrize(
