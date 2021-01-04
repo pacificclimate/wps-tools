@@ -165,10 +165,12 @@ def auto_construct_outputs(outputs):
             output = txt_to_string(value)
 
         elif value.endswith(".meta4"):
+            print(value)
             req = requests.get(value)
             metalinks = BeautifulSoup(
                 BeautifulSoup(req.content.decode("utf-8")).prettify()
             ).find_all("metaurl")
+            print(metalinks)
             auto_construct_outputs([metalink.get_text() for metalink in metalinks])
 
         else:

@@ -1,6 +1,9 @@
 import pytest
+import re
 from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS
 from wps_tools.io import collect_args
+from wps_tools.file_handling import build_meta_link
+from pkg_resources import resource_filename
 import logging
 
 
@@ -124,3 +127,20 @@ class TestProcess(Process):
 @pytest.fixture
 def wps_test_process(monkeypatch):
     return TestProcess()
+
+
+@pytest.fixture
+def metalinks():
+    outfiles = ["test.txt", "expected_gsl.rda"]
+
+    xml = build_meta_link(
+        varname="climo",
+        desc="Climatology",
+        outfiles=outfiles,
+        outdir=resource_filename(__name__, "data"),
+    )
+
+    file_ = re.compile(">(file://.*)<")
+    file_names = file_.findall(xml)
+    if file_names:
+        yield file_names

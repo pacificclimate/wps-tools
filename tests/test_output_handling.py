@@ -1,6 +1,7 @@
 import pytest
 from netCDF4._netCDF4 import Dataset
 from rpy2.robjects.vectors import FloatVector
+
 from wps_tools.output_handling import (
     nc_to_dataset,
     json_to_dict,
@@ -120,9 +121,10 @@ def test_auto_construct_outputs_online(outputs, expected_types):
     [
         (
             [local_path("test.txt"), local_path("expected_gsl.rda"), "test_string"],
-            [str, FloatVector, str],
+            [str, FloatVector, str, str, FloatVector],
         )
     ],
 )
-def test_auto_construct_outputs_local(outputs, expected_types):
+def test_auto_construct_outputs_local(metalinks, outputs, expected_types):
+    outputs.extend(metalinks)
     auto_construct_outputs_test(outputs, expected_types)
