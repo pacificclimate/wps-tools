@@ -47,6 +47,14 @@ def test_vector_to_dict(url, vector_name):
     assert len(output_dict) > 0
 
 
+def txt_to_string_test(url):
+    output_str = txt_to_string(url)
+
+    assert output_str is not None
+    assert output_str != ""
+    assert isinstance(output_str, str)
+
+
 @pytest.mark.online
 @pytest.mark.parametrize(
     ("url"),
@@ -55,12 +63,13 @@ def test_vector_to_dict(url, vector_name):
         (url_path("sample_pour.txt", "http", "climate_explorer_data_prep")),
     ],
 )
-def test_txt_to_string(url):
-    output_str = txt_to_string(url)
+def test_txt_to_string_online(url):
+    txt_to_string_test(url)
 
-    assert output_str is not None
-    assert output_str != ""
-    assert isinstance(output_str, str)
+
+@pytest.mark.parametrize(("url"), [local_path("test.txt")])
+def test_txt_to_string_local(url):
+    txt_to_string_test(url)
 
 
 @pytest.mark.parametrize(
@@ -99,7 +108,12 @@ def test_auto_construct_outputs_online(outputs, expected_types):
 
 @pytest.mark.parametrize(
     ("outputs", "expected_types"),
-    [([local_path("test.txt"), local_path("expected_gsl.rda"),], [str, FloatVector])],
+    [
+        (
+            [local_path("test.txt"), local_path("expected_gsl.rda"), "test_string"],
+            [str, FloatVector, str],
+        )
+    ],
 )
 def test_auto_construct_outputs_local(outputs, expected_types):
     auto_construct_outputs_test(outputs, expected_types)
