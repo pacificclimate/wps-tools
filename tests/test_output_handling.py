@@ -48,7 +48,7 @@ def test_vector_to_dict(url, vector_name):
 
 
 @pytest.mark.parametrize(
-    ("url", "nonvector_name"), [(local_path("ClimdexInput.rda"), "ci")],
+    ("url", "nonvector_name"), [(local_path("matrix.rda"), "mdat")],
 )
 def test_vector_to_dict_err(url, nonvector_name):
     with pytest.raises(ValueError) as e:

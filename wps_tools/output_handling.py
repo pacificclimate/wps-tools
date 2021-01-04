@@ -90,17 +90,18 @@ def vector_to_dict(url, vector_name):
         urlretrieve(url, r_file.name)
         vector = load_rdata_to_python(r_file.name, vector_name)
 
-    if "robjects.vectors" not in str(type(vector)):
+    if "robjects.vectors.FloatVector" not in str(type(vector)):
         raise ValueError(f"{vector_name} is not a vector")
 
-    base = get_package("base")
-    
-    return {
-        (base.names(vector)[index]): (
-            None if math.isnan(vector[index]) else vector[index]
-        )
-        for index in range(len(vector))
-    }
+    else:
+        base = get_package("base")
+
+        return {
+            (base.names(vector)[index]): (
+                None if math.isnan(vector[index]) else vector[index]
+            )
+            for index in range(len(vector))
+        }
 
 
 def txt_to_string(url):
