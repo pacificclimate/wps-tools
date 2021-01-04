@@ -21,12 +21,12 @@ def nc_to_dataset(url):
     Returns:
         Dataset: Dataset object containing input netCDF file content
     """
-
     with NamedTemporaryFile(
         suffix=".nc", prefix="tmp_copy", dir="/tmp", delete=True
     ) as tmp_file:
+        data = Dataset(copy_http_content(url, tmp_file))
 
-        return Dataset(copy_http_content(url, tmp_file))
+    return data
 
 
 def json_to_dict(url):
@@ -39,16 +39,15 @@ def json_to_dict(url):
     Returns:
         dictionary: Python dictionary with input json file's content
     """
-
     with NamedTemporaryFile(
         suffix=".json", prefix="tmp_copy", dir="/tmp", delete=True
     ) as json_file:
         urlretrieve(url, json_file.name)
+        dictionary = json.load(json_file)
 
-        return json.load(json_file)
+    return dictionary
 
 
-# need to write test for this still
 def rda_to_vector(url, vector_name):
     """
     Access content from a rda url file as a Rpy2 vector object
@@ -61,12 +60,13 @@ def rda_to_vector(url, vector_name):
     Returns:
         Rpy2 object: Rpy2 representation of the R object "vector_name"
     """
-
     with NamedTemporaryFile(
         suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
     ) as r_file:
         urlretrieve(url, r_file.name)
-        return load_rdata_to_python(r_file.name, vector_name)
+        vector = load_rdata_to_python(r_file.name, vector_name)
+
+    return vector
 
 
 def vector_to_dict(url, vector_name):
@@ -83,7 +83,6 @@ def vector_to_dict(url, vector_name):
         dictionary: Python dictionary representation of a named
             R vector
     """
-
     with NamedTemporaryFile(
         suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
     ) as r_file:
@@ -114,12 +113,13 @@ def txt_to_string(url):
     Returns:
         string: content of the input txt file
     """
-
     with urlopen(url) as text:
-        return text.read().decode("utf-8")
+        string = text.read().decode("utf-8")
+
+    return string
 
 
-def get_available_robjects(url):
+def get_robjects(url):
     """
     Get a list of all the objects stored in an rda file
 
@@ -129,12 +129,13 @@ def get_available_robjects(url):
     Returns:
         list: a list of the names of objects stored in an rda file
     """
-
     with NamedTemporaryFile(
         suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
     ) as r_file:
         urlretrieve(url, r_file.name)
-        return list(robjects.r(f"load(file='{r_file.name}')"))
+        robjs = list(robjects.r(f"load(file='{r_file.name}')"))
+
+    return robjs
 
 
 def auto_construct_outputs(outputs):
@@ -148,12 +149,10 @@ def auto_construct_outputs(outputs):
     Returns:
         list: the constructed python objects in a list
     """
-
     process_outputs = []
     for value in outputs:
         if value.endswith(".rda") or value.endswith(".rdata"):
-            vector_name = get_available_robjects(value)[0]
-            output = rda_to_vector(value, vector_name)
+            output = [rda_to_vector(value, obj) for obj in get_robjects(value)]
 
         elif value.endswith(".nc"):
             output = nc_to_dataset(value)
@@ -165,17 +164,15 @@ def auto_construct_outputs(outputs):
             output = txt_to_string(value)
 
         elif value.endswith(".meta4"):
-            print(value)
             req = requests.get(value)
             metalinks = BeautifulSoup(
                 BeautifulSoup(req.content.decode("utf-8")).prettify()
             ).find_all("metaurl")
-            print(metalinks)
             auto_construct_outputs([metalink.get_text() for metalink in metalinks])
 
         else:
             output = value
 
-        process_outputs.append(output)
+        process_outputs.extend(output if type(output) == list else [output])
 
     return process_outputs

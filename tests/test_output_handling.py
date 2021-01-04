@@ -7,7 +7,7 @@ from wps_tools.output_handling import (
     json_to_dict,
     vector_to_dict,
     txt_to_string,
-    get_available_robjects,
+    get_robjects,
     auto_construct_outputs,
 )
 from wps_tools.testing import url_path, local_path
@@ -85,8 +85,8 @@ def test_txt_to_string_local(url):
 @pytest.mark.parametrize(
     ("url"), [(local_path("expected_gsl.rda")), (local_path("expected_days_data.rda"))]
 )
-def test_get_available_robjects(url):
-    objects = get_available_robjects(url)
+def test_get_robjects(url):
+    objects = get_robjects(url)
 
     assert len(objects) > 0
     for ob in objects:
