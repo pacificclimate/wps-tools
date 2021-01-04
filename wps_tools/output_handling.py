@@ -27,6 +27,15 @@ def json_to_dict(url):
         return json.load(json_file)
 
 
+# need to write test for this still
+def rda_to_vector(url, vector_name):
+    with NamedTemporaryFile(
+        suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
+    ) as r_file:
+        urlretrieve(url, r_file.name)
+        return load_rdata_to_python(r_file.name, vector_name)
+
+
 def vector_to_dict(url, vector_name):
     with NamedTemporaryFile(
         suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
@@ -59,11 +68,12 @@ def get_available_robjects(url):
     return objects
 
 
-def auto_construct_outputs(get_output):
+def auto_construct_outputs(outputs):
     process_outputs = []
-    for value in get_output:
+    for value in outputs:
         if value.endswith(".rda") or value.endswith(".rdata"):
-            output = load_rdata_to_python(value)
+            vector_name = get_available_robjects(value)[0]
+            output = rda_to_vector(value, vector_name)
 
         elif value.endswith(".nc"):
             output = nc_to_dataset(value)
@@ -84,6 +94,6 @@ def auto_construct_outputs(get_output):
         else:
             output = value
 
-        process_outputs.append((output, type(output)))
+        process_outputs.append(output)
 
     return process_outputs

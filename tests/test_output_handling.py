@@ -1,12 +1,13 @@
 import pytest
 from netCDF4._netCDF4 import Dataset
-
+from rpy2.robjects.vectors import FloatVector
 from wps_tools.output_handling import (
     nc_to_dataset,
     json_to_dict,
     vector_to_dict,
     txt_to_string,
     get_available_robjects,
+    auto_construct_outputs,
 )
 from wps_tools.testing import url_path, local_path
 
@@ -71,3 +72,34 @@ def test_get_available_robjects(url):
     assert len(objects) > 0
     for ob in objects:
         assert isinstance(ob, str)
+
+
+def auto_construct_outputs_test(outputs, expected_types):
+    process_outputs = auto_construct_outputs(outputs)
+    for i in range(len(process_outputs)):
+        assert type(process_outputs[i]) == expected_types[i]
+
+
+@pytest.mark.online
+@pytest.mark.parametrize(
+    ("outputs", "expected_types"),
+    [
+        (
+            [
+                url_path("FileDescription.txt", "http", "climate_explorer_data_prep"),
+                url_path("tiny_gcm_climos.nc", "http"),
+            ],
+            [str, Dataset],
+        )
+    ],
+)
+def test_auto_construct_outputs_online(outputs, expected_types):
+    auto_construct_outputs_test(outputs, expected_types)
+
+
+@pytest.mark.parametrize(
+    ("outputs", "expected_types"),
+    [([local_path("test.txt"), local_path("expected_gsl.rda"),], [str, FloatVector])],
+)
+def test_auto_construct_outputs_local(outputs, expected_types):
+    auto_construct_outputs_test(outputs, expected_types)
