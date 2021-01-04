@@ -94,7 +94,7 @@ def vector_to_dict(url, vector_name):
         raise ValueError(f"{vector_name} is not a vector")
 
     base = get_package("base")
-
+    
     return {
         (base.names(vector)[index]): (
             None if math.isnan(vector[index]) else vector[index]

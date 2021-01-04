@@ -47,6 +47,15 @@ def test_vector_to_dict(url, vector_name):
     assert len(output_dict) > 0
 
 
+@pytest.mark.parametrize(
+    ("url", "nonvector_name"), [(local_path("ClimdexInput.rda"), "ci")],
+)
+def test_vector_to_dict_err(url, nonvector_name):
+    with pytest.raises(ValueError) as e:
+        vector_to_dict(url, nonvector_name)
+        assert str(vars(e)["_excinfo"][1]) == f"{nonvector_name} is not a vector"
+
+
 def txt_to_string_test(url):
     output_str = txt_to_string(url)
 
