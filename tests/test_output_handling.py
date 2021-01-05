@@ -79,9 +79,9 @@ def test_txt_to_string_online(url):
     txt_to_string_test(url)
 
 
-@pytest.mark.parametrize(("url"), [local_path("test.txt")])
-def test_txt_to_string_local(url):
-    txt_to_string_test(url)
+def test_txt_to_string_local(txt_file):
+    txt_to_string_test(f"file://{txt_file.name}")
+    txt_file.close()
 
 
 @pytest.mark.parametrize(
@@ -122,11 +122,13 @@ def test_auto_construct_outputs_online(outputs, expected_types):
     ("outputs", "expected_types"),
     [
         (
-            [local_path("test.txt"), local_path("expected_gsl.rda"), "test_string"],
-            [str, FloatVector, str, str, FloatVector],
+            [local_path("expected_gsl.rda"), "test string"],
+            [FloatVector, str, dict, FloatVector, str],
         )
     ],
 )
-def test_auto_construct_outputs_local(metalinks, outputs, expected_types):
+def test_auto_construct_outputs_local(txt_file, metalinks, outputs, expected_types):
     outputs.extend(metalinks)
+    outputs.append(f"file://{txt_file.name}")
     auto_construct_outputs_test(outputs, expected_types)
+    txt_file.close()
