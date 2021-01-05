@@ -89,10 +89,7 @@ def vector_to_dict(url, vector_name):
         urlretrieve(url, r_file.name)
         vector = load_rdata_to_python(r_file.name, vector_name)
 
-    if "robjects.vectors.FloatVector" not in str(type(vector)):
-        raise ValueError(f"{vector_name} is not a vector")
-
-    else:
+    try:
         base = get_package("base")
 
         return {
@@ -101,6 +98,9 @@ def vector_to_dict(url, vector_name):
             )
             for index in range(len(vector))
         }
+    except TypeError as e:
+        print(f"{e}: {vector_name} is not a named vector")
+        raise
 
 
 def txt_to_string(url):

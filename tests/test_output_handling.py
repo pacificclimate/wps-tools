@@ -52,9 +52,11 @@ def test_vector_to_dict(url, vector_name):
     ("url", "nonvector_name"), [(local_path("matrix.rda"), "mdat")],
 )
 def test_vector_to_dict_err(url, nonvector_name):
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(TypeError) as e:
         vector_to_dict(url, nonvector_name)
-        assert str(vars(e)["_excinfo"][1]) == f"{nonvector_name} is not a vector"
+        assert (
+            str(vars(e)["_excinfo"][1]) == f"{e}: {vector_name} is not a named vector"
+        )
 
 
 def txt_to_string_test(url):
