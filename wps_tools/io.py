@@ -3,6 +3,8 @@ from collections import OrderedDict
 import os
 import logging
 
+from wps_tools.file_handling import url_handler
+
 log_level = LiteralInput(
     "loglevel",
     "Log Level",
