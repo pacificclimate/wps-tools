@@ -1,5 +1,15 @@
 # News / Release Notes
 
+## 1.0.0
+*2021 Jan 5*
+
+* Reorganize modules into `file_handling.py`,
+`logging.py`, `R.py`, `testing.py` and `io.py`
+* Create `output_handling.py` module with the
+functions `nc_to_dataset`, `json_to_dict`,
+`rda_to_vector`, `vector_to_dict`, `txt_to_string`,
+`get_robjects` and `auto_construct_outputs`
+
 ## 0.4.1
 *2020 Dec 16*
 
