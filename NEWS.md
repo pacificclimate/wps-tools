@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 1.0.1
+*2021 Jan 5*
+
+* Fixes io bug with `url_handler` import in `io.py`
+
 ## 1.0.0
 *2021 Jan 5*
 
