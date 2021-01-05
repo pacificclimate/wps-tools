@@ -48,6 +48,8 @@ def url_path(sub_filepath, url_type, sub_dir="daccs"):
     Parameters:
         sub_filepath (str): Sub filepath
         url_type (str):  opendap/http
+        sub_dir (str): The file must be in one of these subdirectories
+                       daccs/climate_explorer_data_prep
 
     Returns:
         str: Full url

@@ -167,7 +167,7 @@ def copy_http_content(http, file):
 
         Parameters:
             http (str): http address containing the desired content
-            file (file object): path to the 
+            file (file object): path to the
                 file that the content will be copied to
         Returns:
             Path to the copied file in /tmp directory
