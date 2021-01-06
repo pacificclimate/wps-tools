@@ -1,5 +1,11 @@
 # News / Release Notes
 
+## 1.0.2
+*2021 Jan 6*
+
+* Change`pywps>=4.2.6` and `netCDF4>=1.5.4` to resolve
+compatibility and deprecation issues in birds
+
 ## 1.0.1
 *2021 Jan 5*
 
