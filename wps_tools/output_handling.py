@@ -142,10 +142,8 @@ def auto_construct_outputs(outputs):
     """
     Automatically construct Python objects from input url files.
     Written to construct complex WPS process Outputs.
-
     Parameters:
         outputs (list): list of file or http url paths to files
-
     Returns:
         list: the constructed python objects in a list
     """
@@ -166,9 +164,16 @@ def auto_construct_outputs(outputs):
         elif value.endswith(".meta4"):
             req = requests.get(value)
             metalinks = BeautifulSoup(
-                BeautifulSoup(req.content.decode("utf-8")).prettify()
+                BeautifulSoup(req.content.decode("utf-8"), features="lxml").prettify(),
+                features="lxml",
             ).find_all("metaurl")
-            auto_construct_outputs([metalink.get_text() for metalink in metalinks])
+
+            return auto_construct_outputs(
+                [
+                    metalink.get_text().replace("\n", "").replace(" ", "")
+                    for metalink in metalinks
+                ]
+            )
 
         else:
             output = value
@@ -176,3 +181,4 @@ def auto_construct_outputs(outputs):
         process_outputs.extend(output if type(output) == list else [output])
 
     return process_outputs
+
