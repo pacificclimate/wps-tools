@@ -9,6 +9,7 @@ from wps_tools.output_handling import (
     txt_to_string,
     get_robjects,
     auto_construct_outputs,
+    get_metalink_content,
 )
 from wps_tools.testing import url_path, local_path
 
@@ -120,15 +121,20 @@ def test_auto_construct_outputs_online(outputs, expected_types):
 
 @pytest.mark.parametrize(
     ("outputs", "expected_types"),
-    [
-        (
-            [local_path("expected_gsl.rda"), "test string"],
-            [FloatVector, str, dict, FloatVector, str],
-        )
-    ],
+    [([local_path("expected_gsl.rda"), "test string"], [FloatVector, str, str],)],
 )
-def test_auto_construct_outputs_local(txt_file, metalinks, outputs, expected_types):
-    outputs.extend(metalinks)
+def test_auto_construct_outputs_local(txt_file, outputs, expected_types):
     outputs.append(f"file://{txt_file.name}")
     auto_construct_outputs_test(outputs, expected_types)
     txt_file.close()
+
+
+@pytest.mark.parametrize(
+    ("output", "expected_types"),
+    [("https://test_metalinks.meta4", [dict, FloatVector])],
+)
+def test_get_metalink_content(mock_metalink, output, expected_types):
+    for file_ in get_metalink_content(output):
+        assert file_.endswith((".json", ".rda"))
+
+    auto_construct_outputs_test([output], expected_types)
