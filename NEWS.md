@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.0.3
+*2021 Jan 11*
+* Fix metalink call in `auto_construct_outputs`
+
 ## 1.0.2
 *2021 Jan 6*
 
