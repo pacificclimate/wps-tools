@@ -1,5 +1,6 @@
 import pytest
 import re
+import requests
 from tempfile import NamedTemporaryFile
 from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS
 from wps_tools.io import collect_args
@@ -131,26 +132,35 @@ def wps_test_process(monkeypatch):
 
 
 @pytest.fixture
-def metalinks():
-    outfiles = ["gsl.json", "expected_gsl.rda"]
-
-    xml = build_meta_link(
-        varname="climo",
-        desc="Climatology",
-        outfiles=outfiles,
-        outdir=resource_filename(__name__, "data"),
-    )
-
-    file_ = re.compile(">(file://.*)<")
-    file_names = file_.findall(xml)
-    if file_names:
-        yield file_names
-
-
-@pytest.fixture
 def txt_file():
     txt = NamedTemporaryFile(suffix=".txt", prefix="test_txt", dir="/tmp", delete=True)
     txt.write(b"Test txt file")
     txt.seek(0)
 
     yield txt
+
+
+class MockResponse:
+    def __init__(self, content):
+        self.content = content.encode()
+
+    def meta4(self):
+        return self.content
+
+
+def mock_metalink_respose(*args, **kwargs):
+    outfiles = ["gsl.json", "expected_gsl.rda"]
+    metalink = build_meta_link(
+        varname="climo",
+        desc="Climatology",
+        outfiles=outfiles,
+        outdir=resource_filename(__name__, "data"),
+    )
+
+    if args[0] == "https://test_metalinks.meta4":
+        return MockResponse(metalink)
+
+
+@pytest.fixture
+def mock_metalink(monkeypatch):
+    monkeypatch.setattr(requests, "get", mock_metalink_respose)

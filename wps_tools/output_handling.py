@@ -119,6 +119,28 @@ def txt_to_string(url):
     return string
 
 
+def get_metalink_content(url):
+    """
+    Get a list of all the files from a metalink
+
+    Parameters:
+        url (str): file or http url path to a meta4 file
+
+    Returns:
+        list: a list of files
+    """
+
+    req = requests.get(url)
+    metalinks = BeautifulSoup(
+        BeautifulSoup(req.content.decode("utf-8"), features="lxml").prettify(),
+        features="lxml",
+    ).find_all("metaurl")
+
+    return [
+        metalink.get_text().replace("\n", "").replace(" ", "") for metalink in metalinks
+    ]
+
+
 def get_robjects(url):
     """
     Get a list of all the objects stored in an rda file
@@ -142,10 +164,8 @@ def auto_construct_outputs(outputs):
     """
     Automatically construct Python objects from input url files.
     Written to construct complex WPS process Outputs.
-
     Parameters:
         outputs (list): list of file or http url paths to files
-
     Returns:
         list: the constructed python objects in a list
     """
@@ -164,11 +184,7 @@ def auto_construct_outputs(outputs):
             output = txt_to_string(value)
 
         elif value.endswith(".meta4"):
-            req = requests.get(value)
-            metalinks = BeautifulSoup(
-                BeautifulSoup(req.content.decode("utf-8")).prettify()
-            ).find_all("metaurl")
-            auto_construct_outputs([metalink.get_text() for metalink in metalinks])
+            return auto_construct_outputs(get_metalink_content(value))
 
         else:
             output = value
