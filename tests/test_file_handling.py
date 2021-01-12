@@ -8,6 +8,7 @@ from wps_tools.file_handling import (
     build_meta_link,
     copy_http_content,
     url_handler,
+    csv_handler,
 )
 from wps_tools.testing import (
     local_path,
@@ -125,3 +126,12 @@ def test_url_handler(url_type, url):
         remove(processed)
     elif url_type == "opendap":
         assert is_opendap_url(processed)
+
+
+@pytest.mark.parametrize(
+    ("file_", "expected_content"),
+    [(resource_filename("tests", "data/rules_small.csv"), ["snow", "hybrid", "rain"])],
+)
+def test_csv_handler(file_, expected_content):
+    csv_content = csv_handler(file_)
+    assert all([rule in csv_content for rule in expected_content])
