@@ -174,3 +174,10 @@ def copy_http_content(http, file):
         """
     file.write(get(http).content)
     return file.name
+
+
+def csv_handler(file_):
+    with open(file_, "r") as csv_file:
+        csv_content = csv_file.read()
+
+    return csv_content
