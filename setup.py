@@ -1,7 +1,7 @@
 import sys
 from setuptools import setup
 
-__version__ = (1, 0, 3)
+__version__ = (1, 1, 0)
 
 try:
     from sphinx.setup_command import BuildDoc

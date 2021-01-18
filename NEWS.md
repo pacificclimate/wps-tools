@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.1.0
+*2021 Jan 12*
+* Add `csv_handler` to `file_handling.py`
+
 ## 1.0.3
 *2021 Jan 11*
 * Fix metalink call in `auto_construct_outputs`
