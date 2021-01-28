@@ -2,7 +2,12 @@ import pytest
 from pkg_resources import resource_filename
 from tempfile import NamedTemporaryFile
 from rpy2 import robjects
-from wps_tools.R import get_package, load_rdata_to_python, save_python_to_rdata
+from wps_tools.R import (
+    get_package,
+    load_rdata_to_python,
+    save_python_to_rdata,
+    r_valid_name,
+)
 from pywps.app.exceptions import ProcessError
 
 
@@ -33,6 +38,19 @@ def test_load_rdata_to_python(r_file, r_object_name):
 
 
 @pytest.mark.parametrize(
+    ("file_", "obj_name"),
+    [(resource_filename("tests", "data/expected_days_data.rda"), "autumn_days"),],
+)
+def test_load_rdata_to_python_err(file_, obj_name):
+    with pytest.raises(ProcessError) as e:
+        load_rdata_to_python(file_, obj_name)
+    assert (
+        str(vars(e)["_excinfo"][1])
+        == "RRuntimeError: The variable name passed is not an object found in the given rda file"
+    )
+
+
+@pytest.mark.parametrize(
     ("r_name", "py_var"), [("str_ex", "string"), ("int_ex", 300),],
 )
 def test_save_python_to_rdata(r_name, py_var):
@@ -45,3 +63,19 @@ def test_save_python_to_rdata(r_name, py_var):
     assert test_var[0] == py_var
 
     robjects.r("rm(list=ls())")
+
+
+@pytest.mark.parametrize(
+    ("name"), [("hello.wold"), ("r_name")],
+)
+def test_r_valid_name(name):
+    r_valid_name(name)
+
+
+@pytest.mark.parametrize(
+    ("name"), [(".2"), ("if"), ("two words")],
+)
+def test_r_valid_name_err(name):
+    with pytest.raises(ProcessError) as e:
+        r_valid_name(name)
+    assert str(vars(e)["_excinfo"][1]) == "Your vector name is not a valid R name"

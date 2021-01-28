@@ -1,5 +1,7 @@
+import re
 from rpy2 import robjects
 from rpy2.robjects.packages import isinstalled, importr
+from rpy2.rinterface_lib.embedded import RRuntimeError
 from pywps.app.exceptions import ProcessError
 
 
@@ -35,6 +37,7 @@ def load_rdata_to_python(r_file, r_object_name):
     try:
         robjects.r(f"load(file='{r_file}')")
         obj = robjects.r(r_object_name)
+        return obj
     except RRuntimeError as e:
         err_name = re.compile(r"object \'(.*)\' not found").findall(str(e))
         if "_" in err_name[0]:
