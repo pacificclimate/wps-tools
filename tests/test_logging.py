@@ -2,7 +2,6 @@ import pytest
 import logging
 import os
 from tempfile import TemporaryDirectory
-from pkg_resources import resource_filename
 from wps_tools.logging import log_handler
 from .common import TestResponse
 

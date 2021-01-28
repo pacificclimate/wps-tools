@@ -1,5 +1,4 @@
 import pytest
-import os
 
 from wps_tools.testing import (
     local_path,

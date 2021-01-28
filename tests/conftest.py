@@ -1,5 +1,4 @@
 import pytest
-import re
 import requests
 from tempfile import NamedTemporaryFile
 from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS
