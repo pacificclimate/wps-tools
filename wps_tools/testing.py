@@ -1,7 +1,7 @@
 import os
 import io
 import pytest
-import redirect_stderr
+from contextlib import redirect_stderr
 from pkg_resources import resource_filename
 from pywps import Service
 from pywps.app.basic import get_xpath_ns
@@ -124,7 +124,7 @@ def process_err_test(process, datainputs):
     """
     err = io.StringIO()
     with redirect_stderr(err), pytest.raises(Exception):
-            run_wps_process(process(), datainputs)
+        run_wps_process(process(), datainputs)
 
     assert "pywps.app.exceptions.ProcessError" in err.getvalue()
 

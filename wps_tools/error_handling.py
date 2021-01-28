@@ -1,6 +1,7 @@
 import re
 from pywps.app.exceptions import ProcessError
 
+
 def custom_process_error(err):
     """ProcessError from pywps only allows a limited list of valid chars
     in custom msgs or it reverts to it's default msg. By matching the end
