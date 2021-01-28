@@ -66,6 +66,9 @@ def save_python_to_rdata(r_name, py_var, r_file):
 def r_valid_name(robj_name):
     """The R function 'make.names' will change a name if it
     is not syntactically correct and leave it if it is
+
+    Parameters:
+        robj_name (str): The name of the robject to verify
     """
     base = get_package("base")
     if base.make_names(robj_name)[0] != robj_name:

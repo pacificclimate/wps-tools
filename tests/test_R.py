@@ -66,7 +66,7 @@ def test_save_python_to_rdata(r_name, py_var):
 
 
 @pytest.mark.parametrize(
-    ("name"), [("hello.wold"), ("r_name")],
+    ("name"), [("hello.world"), ("r_name")],
 )
 def test_r_valid_name(name):
     r_valid_name(name)
