@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.2.0
+*2021 Jan 28*
+* Add `ProcessError` handling methods
+
 ## 1.1.0
 *2021 Jan 12*
 * Add `csv_handler` to `file_handling.py`
