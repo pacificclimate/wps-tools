@@ -10,10 +10,7 @@ extras_require = {
     "r": ["rpy2 == 3.3.6"],
 }
 extras_require["complete"] = sorted({v for req in extras_require.values() for v in req})
-extras_require["test"] = [
-    "pytest == 5.4.3",
-    "black == 19.10b0"
-]
+extras_require["test"] = ["pytest == 5.4.3", "black == 19.10b0"]
 
 # Main installation requirements
 install_requires = [
