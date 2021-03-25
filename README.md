@@ -1,9 +1,13 @@
 # wps-tools
 
-
 ## Overview
 
-The Web Processing Services (WPS) at PCIC, known as birds, are developed and tested using many common functions. The `wps-tools` repository was created to store these functions in a single place, mitigating redundant code across the birds, and to simplify the creation and testing of new WPS processes. Currently, this repo is used as a Python package for the [thunderbird](https://github.com/pacificclimate/thunderbird), [osprey](https://github.com/pacificclimate/osprey), and [sandpiper](https://github.com/pacificclimate/sandpiper) repositories and should be used for future birds.
+The Web Processing Services (WPS) at PCIC, known as birds, are developed and tested using many common functions. The `wps-tools` repository was created to store these functions in a single place, mitigating redundant code across the birds, and to simplify the creation and testing of new WPS processes. Currently, this package is used in all the PCIC birds:
+  - [`thunderbird`](https://github.com/pacificclimate/thunderbird)
+  - [`osprey`](https://github.com/pacificclimate/osprey)
+  - [`sandpiper`](https://github.com/pacificclimate/sandpiper)
+  - [`chickadee`](https://github.com/pacificclimate/chickadee)
+  - [`quail`](https://github.com/pacificclimate/quail).
 
 ## Structure
 
@@ -13,25 +17,11 @@ This module contains a collection of commonly used PyWPS inputs and outputs and 
 
 ### testing.py
 
-These functions help run a bird's `pytest` suite and are thus mainly used in `test_*.py` files. 
+These functions help run a bird's `pytest` suite and are thus mainly used in `test_*.py` files.
 
 ### utils.py
 
 These functions gather PyWPS inputs, build PyWPS outputs, and handle logging information within a process's class file and are thus mainly used in `wps_*.py` files.
-
-## Installation and Usage as Package
-
-While in a different repository, the `wps-tools` package can be installed by executing
-
-```bash
-pip install wps-tools -i https://pypi.pacifcclimate.org/simple
-```
-
-Afterwards, each function can be used in a `.py` file by importing it. For example, if one wishes to use the `log_handler` function from `utils.py`, they access it by writing
-
-```python
-from wps_tools.utils import log_handler
-```
 
 ## Installation as GitHub Repository
 
@@ -40,7 +30,27 @@ Clone the repo onto the target machine. Python installation should be done in a 
 ```bash
 $ python3 -m venv venv
 $ source venv/bin/activate
-(venv) $ pip install -r requirements.txt -i https://pypi.pacificclimate.org/simple
+(venv) $ pip install .
+```
+The general installation using `.` will leave out the `rpy2` requirement. This is done to reduce the dependency load on the birds, specifically with `R` installation. If you wish to use the `R` capabilities use the `.[r]` or `.[complete]` installation scenarios.
+
+In total there are 3 different extra installations available:
+ - `[complete]` - everything needed to use the full package
+ - `[r]` - base requirements + those needed to run the `R` methods
+ - `[test]` - everything needed for testing
+
+## Installation and Usage as Package
+
+While in a different repository, the `wps-tools` package can be installed by executing
+
+```bash
+pip install -i https://pypi.pacifcclimate.org/simple wps-tools[complete]
+```
+
+Afterwards, each function can be used in a `.py` file by importing it. For example, if one wishes to use the `log_handler` function from `utils.py`, they access it by writing
+
+```python
+from wps_tools.utils import log_handler
 ```
 
 ## Development
@@ -52,7 +62,7 @@ Once the repository is cloned and the required development packages are installe
 More Python packages are required to run the tests and they can be installed by executing
 
 ```bash
-pip install -r test_requirements.txt
+pip install .[test]
 ```
 
 The entire test suite can then be run by executing

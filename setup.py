@@ -1,14 +1,26 @@
 import sys
 from setuptools import setup
 
+
 __version__ = (1, 2, 0)
 
-try:
-    from sphinx.setup_command import BuildDoc
-except ImportError:
-    warn("Could not import sphinx. You won't be able to build the docs")
 
-reqs = [line.strip() for line in open("requirements.txt")]
+# Detail different installation scenarios
+extras_require = {
+    "r": ["rpy2 == 3.3.6"],
+}
+extras_require["complete"] = {
+    requirements for scenario in extras_require.values() for requirements in scenario
+}
+extras_require["test"] = ["pytest == 5.4.3", "black == 19.10b0"]
+
+# Main installation requirements
+install_requires = [
+    "pywps >= 4.2.6",
+    "nchelpers == 5.5.7",
+    "netCDF4 >= 1.5.4",
+    "beautifulsoup4 == 4.9.3",
+]
 
 setup(
     name="wps_tools",
@@ -24,17 +36,12 @@ setup(
         "tests": ["data/*.nc", "processes/*.py"],
     },
     include_package_data=True,
-    install_requires=reqs,
-    cmdclass={"build_sphinx": BuildDoc},
-    command_options={
-        "build_sphinx": {
-            "project": ("setup.py", "wps_tools"),
-            "version": ("setup.py", ".".join(str(d) for d in __version__)),
-            "source_dir": ("setup.py", "doc/source"),
-        }
-    },
+    install_requires=install_requires,
+    extras_require=extras_require,
     classifiers=[
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
 )
