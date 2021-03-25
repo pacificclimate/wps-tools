@@ -9,7 +9,9 @@ __version__ = (1, 2, 0)
 extras_require = {
     "r": ["rpy2 == 3.3.6"],
 }
-extras_require["complete"] = sorted({v for req in extras_require.values() for v in req})
+extras_require["complete"] = {
+    requirements for scenario in extras_require.values() for requirements in scenario
+}
 extras_require["test"] = ["pytest == 5.4.3", "black == 19.10b0"]
 
 # Main installation requirements
@@ -36,14 +38,6 @@ setup(
     include_package_data=True,
     install_requires=install_requires,
     extras_require=extras_require,
-    # cmdclass={"build_sphinx": BuildDoc},
-    # command_options={
-    #     "build_sphinx": {
-    #         "project": ("setup.py", "wps_tools"),
-    #         "version": ("setup.py", ".".join(str(d) for d in __version__)),
-    #         "source_dir": ("setup.py", "doc/source"),
-    #     }
-    # },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",

@@ -43,7 +43,7 @@ There are 3 different extra installations you can use:
 While in a different repository, the `wps-tools` package can be installed by executing
 
 ```bash
-pip install wps-tools[complete] -i https://pypi.pacifcclimate.org/simple
+pip install -i https://pypi.pacifcclimate.org/simple wps-tools[complete]
 ```
 
 Afterwards, each function can be used in a `.py` file by importing it. For example, if one wishes to use the `log_handler` function from `utils.py`, they access it by writing
