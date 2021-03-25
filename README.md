@@ -30,10 +30,11 @@ Clone the repo onto the target machine. Python installation should be done in a 
 ```bash
 $ python3 -m venv venv
 $ source venv/bin/activate
-(venv) $ pip install .[complete]
+(venv) $ pip install .
 ```
+The general installation using `.` will leave out the `rpy2` requirement. This is done to reduce the dependency load on the birds, specifically with `R` installation. If you wish to use the `R` capabilities use the `.[r]` or `.[complete]` installation scenarios.
 
-There are 3 different extra installations you can use:
+In total there are 3 different extra installations available:
  - `[complete]` - everything needed to use the full package
  - `[r]` - base requirements + those needed to run the `R` methods
  - `[test]` - everything needed for testing
