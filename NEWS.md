@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.2.1
+*2021 Mar 25*
+* Add flexible installation scenarios for non-`R` birds
+
 ## 1.2.0
 *2021 Jan 28*
 * Add `ProcessError` handling methods

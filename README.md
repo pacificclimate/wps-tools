@@ -7,7 +7,7 @@ The Web Processing Services (WPS) at PCIC, known as birds, are developed and tes
   - [`osprey`](https://github.com/pacificclimate/osprey)
   - [`sandpiper`](https://github.com/pacificclimate/sandpiper)
   - [`chickadee`](https://github.com/pacificclimate/chickadee)
-  - [`quail`](https://github.com/pacificclimate/quail).
+  - [`quail`](https://github.com/pacificclimate/quail)
 
 ## Structure
 
