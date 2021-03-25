@@ -5,11 +5,11 @@ on: push
 jobs:
   test:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [3.6, 3.7]
-                
+        python-version: [3.7, 3.8]
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -22,8 +22,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install cdo
-        pip install -r requirements.txt -r test_requirements.txt
-        pip install .
+        pip install .[complete]
+        pip install .[test]
     - name: Test with pytest (full)
       if: github.ref == 'refs/heads/master'
       run: |
