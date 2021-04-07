@@ -74,41 +74,52 @@ vector_name = LiteralInput(
 )
 
 
-def collect_args(request, workdir):
+def collect_args(inputs, workdir):
     """Collects PyWPS input arguments
 
-    There are 3 ways to retrieve PyWPS input arguments depending on their types:
-        .data is used to retrieve the data provided as LiteralInput
-        .url is used to retrieve the URL path to the input provided as ComplexInput
-        .file is used to retrieve the filepath to the input provided as ComplexInput
+    There are 4 ways to retrieve PyWPS input arguments depending on their types:
+        LiteralInput
+        - `.data` is used to retrieve the data
+
+        ComplexInput
+        - `.url` is used to retrieve the URL path
+        - `.file` is used to retrieve the filepath
+        - `.stream` is used to retrieve the datastream
 
     The function collects and returns the retrieved arguments in an OrderedDict for
     versatility. Items are ordered in the sequence of "inputs" list of a process
 
     Parameters:
-        request (pywps.app.WPSRequest.WPSRequest): PyWPS request that carries inputs
+        inputs (list): Collection of inputs provided by PyWPS
         workdir (str): Path to the workdir
 
     Returns:
-        args (OrderedDict): keys are identifiers and values are input arguments
+        Dict containing processed inputs
     """
-    args = OrderedDict()
-    for k in request.inputs.keys():
-        if "data_type" in vars(request.inputs[k][0]).keys():
-            # LiteralData
-            args[request.inputs[k][0].identifier] = [
-                request.inputs[k][i].data for i in range(0, len(request.inputs[k]))
-            ]
-        elif vars(request.inputs[k][0])["_url"] != None:
-            # OPeNDAP or HTTPServer
-            args[request.inputs[k][0].identifier] = [
-                url_handler(workdir, request.inputs[k][i].url)
-                for i in range(0, len(request.inputs[k]))
-            ]
-        elif os.path.isfile(request.inputs[k][0].file):
-            # Local files
-            args[request.inputs[k][0].identifier] = [
-                request.inputs[k][0].file for i in range(0, len(request.inputs[k]))
-            ]
 
-    return args
+    def process_literal(input):
+        return input.data
+
+    def process_complex(input):
+        if input["_url"] != None:
+            return url_handler(workdir, input.url)
+
+        elif input["_stream"] != None:
+            return input.stream
+
+        elif os.path.isfile(input.file):
+            return input.file
+
+        else:
+            raise Exception("temp exception, need processerror")
+
+    def process_input(multi_input):
+        info = multi_input.json
+
+        if info["type"] == "literal":
+            return [process_literal(input) for input in multi_input]
+
+        elif info["type"] == "complex":
+            return [process_complex(input) for input in multi_input]
+
+    return {input.identifier: process_input(input) for input in inputs}
