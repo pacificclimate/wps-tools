@@ -1,9 +1,17 @@
-from pywps import LiteralInput, ComplexOutput, FORMATS, Format
-from collections import OrderedDict
+from pywps import LiteralInput, ComplexInput, ComplexOutput, FORMATS, Format
 import os
 import logging
-
+from pywps.app.exceptions import ProcessError
 from wps_tools.file_handling import url_handler
+
+
+# Inputs
+dryrun_input = LiteralInput(
+    "dry_run",
+    "Dry Run",
+    abstract="Checks file to ensure compatible with process",
+    data_type="boolean",
+)
 
 log_level = LiteralInput(
     "loglevel",
@@ -13,20 +21,45 @@ log_level = LiteralInput(
     allowed_values=list(logging._levelToName.values()),
 )
 
-
-dryrun_input = LiteralInput(
-    "dry_run",
-    "Dry Run",
-    abstract="Checks file to ensure compatible with process",
-    data_type="boolean",
+vector_name = LiteralInput(
+    "vector_name",
+    "Output vector variable name",
+    abstract="Name to label the output vector",
+    default="output_vector",
+    min_occurs=0,
+    max_occurs=1,
+    data_type="string",
 )
 
+csv_input = ComplexInput(
+    "csv",
+    "CSV document",
+    abstract="A CSV document",
+    supported_formats=[Format("text/csv", extension=".csv"), FORMATS.TEXT],
+)
+
+# Outputs
+dryrun_output = ComplexOutput(
+    "dry_output",
+    "Dry Output",
+    as_reference=True,
+    abstract="File information",
+    supported_formats=[FORMATS.TEXT],
+)
 
 meta4_output = ComplexOutput(
     "output",
     "Output",
     as_reference=True,
     abstract="Metalink object between output files",
+    supported_formats=[FORMATS.META4],
+)
+
+meta4_dryrun_output = ComplexOutput(
+    "dry_output",
+    "Dry Output",
+    as_reference=True,
+    abstract="Metalink object between dry output files",
     supported_formats=[FORMATS.META4],
 )
 
@@ -38,22 +71,6 @@ nc_output = ComplexOutput(
     supported_formats=[FORMATS.NETCDF],
 )
 
-dryrun_output = ComplexOutput(
-    "dry_output",
-    "Dry Output",
-    as_reference=True,
-    abstract="File information",
-    supported_formats=[FORMATS.TEXT],
-)
-
-meta4_dryrun_output = ComplexOutput(
-    "dry_output",
-    "Dry Output",
-    as_reference=True,
-    abstract="Metalink object between dry output files",
-    supported_formats=[FORMATS.META4],
-)
-
 rda_output = ComplexOutput(
     "rda_output",
     "Rda output file",
@@ -61,16 +78,6 @@ rda_output = ComplexOutput(
     supported_formats=[
         Format("application/x-gzip", extension=".rda", encoding="base64")
     ],
-)
-
-vector_name = LiteralInput(
-    "vector_name",
-    "Output vector variable name",
-    abstract="Name to label the output vector",
-    default="output_vector",
-    min_occurs=0,
-    max_occurs=1,
-    data_type="string",
 )
 
 
@@ -84,42 +91,44 @@ def collect_args(inputs, workdir):
         ComplexInput
         - `.url` is used to retrieve the URL path
         - `.file` is used to retrieve the filepath
-        - `.stream` is used to retrieve the datastream
-
-    The function collects and returns the retrieved arguments in an OrderedDict for
-    versatility. Items are ordered in the sequence of "inputs" list of a process
+        - `.stream` is used to retrieve the csv datastreams
 
     Parameters:
-        inputs (list): Collection of inputs provided by PyWPS
+        inputs (dict): Collection of inputs provided by PyWPS
         workdir (str): Path to the workdir
 
     Returns:
         Dict containing processed inputs
     """
-
     def process_literal(input):
+        """Handler for LiteralInputs"""
         return input.data
 
     def process_complex(input):
-        if input["_url"] != None:
-            return url_handler(workdir, input.url)
-
-        elif input["_stream"] != None:
+        """Handler for ComplexInputs"""
+        if vars(input)["identifier"] == "csv":
             return input.stream
+
+        elif vars(input)["_url"] != None:
+            return url_handler(workdir, input.url)
 
         elif os.path.isfile(input.file):
             return input.file
 
         else:
-            raise Exception("temp exception, need processerror")
+            raise ProcessError("This input is not supported")
 
     def process_input(multi_input):
-        info = multi_input.json
+        """Process a list of inputs
 
-        if info["type"] == "literal":
-            return [process_literal(input) for input in multi_input]
+        Each set of inputs from the outer function may or may not have multiple
+        entries. The `multi_input` is just a list of Complex or Literal inputs
+        that we iterate over.
+        """
+        first, *_ = multi_input
+        info = first.json
+        processor = process_literal if info["type"] == "literal" else process_complex
 
-        elif info["type"] == "complex":
-            return [process_complex(input) for input in multi_input]
+        return [processor(input) for input in multi_input]
 
-    return {input.identifier: process_input(input) for input in inputs}
+    return {identifier: process_input(input) for identifier, input in inputs.items()}
