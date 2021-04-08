@@ -69,21 +69,14 @@ class TestProcessMultiInput(Process):
         )
 
     def _handler(self, request, response):
-        print("in here")
         collected = collect_args(request.inputs, self.workdir)
-        print("post collection")
         count_dict = eval(request.inputs["argc"][0].data)
-        print("post eval")
 
         for input_ in collected.keys():
-            print("in assertion")
             assert len(collected[input_]) == count_dict[input_]
 
-        print("post assertion")
         collected_argc = sum([len(collected[k]) for k in collected.keys()])
-        print("post check")
         response.outputs["collected_argc"].data = collected_argc
-        print("post response build")
         return response
 
 

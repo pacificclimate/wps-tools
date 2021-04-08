@@ -108,7 +108,6 @@ def run_wps_process(process, params):
         identifier=process.identifier,
         datainputs=datainputs,
     )
-
     assert_response_success(resp)
 
 
