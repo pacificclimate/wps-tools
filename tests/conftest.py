@@ -38,7 +38,7 @@ class TestProcessMultiInput(Process):
                 "CSV",
                 max_occurs=1,
                 abstract="CSV document",
-                supported_formats=[Format('text/csv', extension='.csv'), FORMATS.TEXT],
+                supported_formats=[Format("text/csv", extension=".csv"), FORMATS.TEXT],
             ),
             LiteralInput(
                 "argc",

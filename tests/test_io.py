@@ -8,9 +8,7 @@ from wps_tools.testing import run_wps_process
 
 def run_args_collection(wps_test_process_multi_input, file, csv, argc):
     params = (
-        ";".join([f"file={nc}" for nc in file])
-        + f";csv=\"{csv}\""
-        + f";argc={argc};"
+        ";".join([f"file={nc}" for nc in file]) + f';csv="{csv}"' + f";argc={argc};"
     )
     run_wps_process(wps_test_process_multi_input, params)
 

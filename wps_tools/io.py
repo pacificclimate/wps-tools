@@ -100,6 +100,7 @@ def collect_args(inputs, workdir):
     Returns:
         Dict containing processed inputs
     """
+
     def process_literal(input):
         """Handler for LiteralInputs"""
         return input.data
