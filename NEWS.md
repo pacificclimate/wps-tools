@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.3.0
+*2021 Apr 8*
+* Add stream handling to `collect_args`
+
 ## 1.2.1
 *2021 Mar 25*
 * Add flexible installation scenarios for non-`R` birds
