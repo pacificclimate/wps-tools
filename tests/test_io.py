@@ -6,33 +6,31 @@ from wps_tools.testing import (
 from wps_tools.testing import run_wps_process
 
 
-def collect_args_test(wps_test_collect_args, file1, file2, argc):
+def run_args_collection(wps_test_process_multi_input, file, csv, argc):
     params = (
-        ";".join(
-            [f"file1={nc}" for nc in file1] + [f"file2={file_}" for file_ in file2]
-        )
+        ";".join([f"file={nc}" for nc in file])
+        + f";csv=\"{csv}\""
         + f";argc={argc};"
     )
-    run_wps_process(wps_test_collect_args, params)
+    run_wps_process(wps_test_process_multi_input, params)
 
 
 @pytest.mark.parametrize(
-    ("file1", "file2", "argc"),
+    ("file", "argc"),
     [
         (
             [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
-            [local_path("gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc")],
-            {"file1": 2, "file2": 1, "argc": 1},
+            {"file": 2, "csv": 1, "argc": 1},
         )
     ],
 )
-def test_collect_args_local(wps_test_collect_args, file1, file2, argc):
-    collect_args_test(wps_test_collect_args, file1, file2, argc)
+def test_collect_args_local(wps_test_process_multi_input, file, csv_data, argc):
+    run_args_collection(wps_test_process_multi_input, file, f"{csv_data}", argc)
 
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("file1", "file2", "argc"),
+    ("file", "csv", "argc"),
     [
         (
             [
@@ -43,12 +41,11 @@ def test_collect_args_local(wps_test_collect_args, file1, file2, argc):
                 )
             ],
             [
-                url_path("tiny_daily_pr.nc", "opendap"),
-                url_path("tiny_daily_prsn", "opendap"),
+                "https://raw.githubusercontent.com/pacificclimate/sandpiper/master/tests/data/tiny_rules.csv",
             ],
-            {"file1": 1, "file2": 2, "argc": 1},
+            {"file": 1, "csv": 1, "argc": 1},
         )
     ],
 )
-def test_collect_args_online(wps_test_collect_args, file1, file2, argc):
-    collect_args_test(wps_test_collect_args, file1, file2, argc)
+def test_collect_args_online(wps_test_process_multi_input, file, csv, argc):
+    run_args_collection(wps_test_process_multi_input, file, csv, argc)
