@@ -1,7 +1,7 @@
 import pytest
 import requests
 from tempfile import NamedTemporaryFile
-from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS
+from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS, Format
 from wps_tools.io import collect_args
 from wps_tools.file_handling import build_meta_link
 from pkg_resources import resource_filename
@@ -21,24 +21,24 @@ def mock_dev_url(monkeypatch):
 LOGGER = logging.getLogger("PYWPS")
 
 
-class TestCollectArgs(Process):
+class TestProcessMultiInput(Process):
     """A simple wps process for test_collect_args in test_utils.py"""
 
     def __init__(self):
         inputs = [
             ComplexInput(
-                "file1",
-                "File 1",
+                "file",
+                "File",
                 max_occurs=2,
-                abstract="Path to a local or online input file",
+                abstract="Path to a local or online nc file",
                 supported_formats=[FORMATS.NETCDF, FORMATS.DODS],
             ),
             ComplexInput(
-                "file2",
-                "File 2",
-                max_occurs=2,
-                abstract="Path to another local or online input file",
-                supported_formats=[FORMATS.NETCDF, FORMATS.DODS],
+                "csv",
+                "CSV",
+                max_occurs=1,
+                abstract="CSV document",
+                supported_formats=[Format("text/csv", extension=".csv"), FORMATS.TEXT],
             ),
             LiteralInput(
                 "argc",
@@ -57,7 +57,7 @@ class TestCollectArgs(Process):
             ),
         ]
 
-        super(TestCollectArgs, self).__init__(
+        super(TestProcessMultiInput, self).__init__(
             self._handler,
             identifier="test_collect_args",
             title="Test collect_args",
@@ -69,7 +69,7 @@ class TestCollectArgs(Process):
         )
 
     def _handler(self, request, response):
-        collected = collect_args(request, self.workdir)
+        collected = collect_args(request.inputs, self.workdir)
         count_dict = eval(request.inputs["argc"][0].data)
 
         for input_ in collected.keys():
@@ -81,8 +81,8 @@ class TestCollectArgs(Process):
 
 
 @pytest.fixture
-def wps_test_collect_args(monkeypatch):
-    return TestCollectArgs()
+def wps_test_process_multi_input(monkeypatch):
+    return TestProcessMultiInput()
 
 
 class TestProcess(Process):
@@ -163,3 +163,8 @@ def mock_metalink_respose(*args, **kwargs):
 @pytest.fixture
 def mock_metalink(monkeypatch):
     monkeypatch.setattr(requests, "get", mock_metalink_respose)
+
+
+@pytest.fixture
+def csv_data():
+    return open(resource_filename("tests", "data/tiny_rules.csv")).read()

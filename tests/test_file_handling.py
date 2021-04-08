@@ -71,8 +71,10 @@ def test_get_filepaths_online(nc_input):
 )
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
-    assert len(outfiles) == 2
-    assert set(outfiles) == set(["tiny_daily_prsn.nc", "tiny_daily_pr.nc"])
+    assert len(outfiles) == 3
+    assert set(outfiles) == set(
+        ["tiny_daily_prsn.nc", "tiny_daily_pr.nc", "tiny_rules.csv"]
+    )
 
 
 @pytest.mark.parametrize(
@@ -130,7 +132,7 @@ def test_url_handler(url_type, url):
 
 @pytest.mark.parametrize(
     ("file_", "expected_content"),
-    [(resource_filename("tests", "data/rules_small.csv"), ["snow", "hybrid", "rain"])],
+    [(resource_filename("tests", "data/tiny_rules.csv"), ["snow"])],
 )
 def test_csv_handler(file_, expected_content):
     csv_content = csv_handler(file_)

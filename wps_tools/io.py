@@ -1,19 +1,11 @@
-from pywps import LiteralInput, ComplexOutput, FORMATS, Format
-from collections import OrderedDict
+from pywps import LiteralInput, ComplexInput, ComplexOutput, FORMATS, Format
 import os
 import logging
-
+from pywps.app.exceptions import ProcessError
 from wps_tools.file_handling import url_handler
 
-log_level = LiteralInput(
-    "loglevel",
-    "Log Level",
-    default="INFO",
-    abstract="Logging level",
-    allowed_values=list(logging._levelToName.values()),
-)
 
-
+# Inputs
 dryrun_input = LiteralInput(
     "dry_run",
     "Dry Run",
@@ -21,46 +13,12 @@ dryrun_input = LiteralInput(
     data_type="boolean",
 )
 
-
-meta4_output = ComplexOutput(
-    "output",
-    "Output",
-    as_reference=True,
-    abstract="Metalink object between output files",
-    supported_formats=[FORMATS.META4],
-)
-
-nc_output = ComplexOutput(
-    "output",
-    "Output",
-    as_reference=True,
-    abstract="Output Netcdf File",
-    supported_formats=[FORMATS.NETCDF],
-)
-
-dryrun_output = ComplexOutput(
-    "dry_output",
-    "Dry Output",
-    as_reference=True,
-    abstract="File information",
-    supported_formats=[FORMATS.TEXT],
-)
-
-meta4_dryrun_output = ComplexOutput(
-    "dry_output",
-    "Dry Output",
-    as_reference=True,
-    abstract="Metalink object between dry output files",
-    supported_formats=[FORMATS.META4],
-)
-
-rda_output = ComplexOutput(
-    "rda_output",
-    "Rda output file",
-    abstract="Rda file containing R output data",
-    supported_formats=[
-        Format("application/x-gzip", extension=".rda", encoding="base64")
-    ],
+log_level = LiteralInput(
+    "loglevel",
+    "Log Level",
+    default="INFO",
+    abstract="Logging level",
+    allowed_values=list(logging._levelToName.values()),
 )
 
 vector_name = LiteralInput(
@@ -73,42 +31,105 @@ vector_name = LiteralInput(
     data_type="string",
 )
 
+csv_input = ComplexInput(
+    "csv",
+    "CSV document",
+    abstract="A CSV document",
+    supported_formats=[Format("text/csv", extension=".csv"), FORMATS.TEXT],
+)
 
-def collect_args(request, workdir):
+# Outputs
+dryrun_output = ComplexOutput(
+    "dry_output",
+    "Dry Output",
+    as_reference=True,
+    abstract="File information",
+    supported_formats=[FORMATS.TEXT],
+)
+
+meta4_output = ComplexOutput(
+    "output",
+    "Output",
+    as_reference=True,
+    abstract="Metalink object between output files",
+    supported_formats=[FORMATS.META4],
+)
+
+meta4_dryrun_output = ComplexOutput(
+    "dry_output",
+    "Dry Output",
+    as_reference=True,
+    abstract="Metalink object between dry output files",
+    supported_formats=[FORMATS.META4],
+)
+
+nc_output = ComplexOutput(
+    "output",
+    "Output",
+    as_reference=True,
+    abstract="Output Netcdf File",
+    supported_formats=[FORMATS.NETCDF],
+)
+
+rda_output = ComplexOutput(
+    "rda_output",
+    "Rda output file",
+    abstract="Rda file containing R output data",
+    supported_formats=[
+        Format("application/x-gzip", extension=".rda", encoding="base64")
+    ],
+)
+
+
+def collect_args(inputs, workdir):
     """Collects PyWPS input arguments
 
-    There are 3 ways to retrieve PyWPS input arguments depending on their types:
-        .data is used to retrieve the data provided as LiteralInput
-        .url is used to retrieve the URL path to the input provided as ComplexInput
-        .file is used to retrieve the filepath to the input provided as ComplexInput
+    There are 4 ways to retrieve PyWPS input arguments depending on their types:
+        LiteralInput
+        - `.data` is used to retrieve the data
 
-    The function collects and returns the retrieved arguments in an OrderedDict for
-    versatility. Items are ordered in the sequence of "inputs" list of a process
+        ComplexInput
+        - `.url` is used to retrieve the URL path
+        - `.file` is used to retrieve the filepath
+        - `.stream` is used to retrieve the csv datastreams
 
     Parameters:
-        request (pywps.app.WPSRequest.WPSRequest): PyWPS request that carries inputs
+        inputs (dict): Collection of inputs provided by PyWPS
         workdir (str): Path to the workdir
 
     Returns:
-        args (OrderedDict): keys are identifiers and values are input arguments
+        Dict containing processed inputs
     """
-    args = OrderedDict()
-    for k in request.inputs.keys():
-        if "data_type" in vars(request.inputs[k][0]).keys():
-            # LiteralData
-            args[request.inputs[k][0].identifier] = [
-                request.inputs[k][i].data for i in range(0, len(request.inputs[k]))
-            ]
-        elif vars(request.inputs[k][0])["_url"] != None:
-            # OPeNDAP or HTTPServer
-            args[request.inputs[k][0].identifier] = [
-                url_handler(workdir, request.inputs[k][i].url)
-                for i in range(0, len(request.inputs[k]))
-            ]
-        elif os.path.isfile(request.inputs[k][0].file):
-            # Local files
-            args[request.inputs[k][0].identifier] = [
-                request.inputs[k][0].file for i in range(0, len(request.inputs[k]))
-            ]
 
-    return args
+    def process_literal(input):
+        """Handler for LiteralInputs"""
+        return input.data
+
+    def process_complex(input):
+        """Handler for ComplexInputs"""
+        if vars(input)["identifier"] == "csv":
+            return input.stream
+
+        elif vars(input)["_url"] != None:
+            return url_handler(workdir, input.url)
+
+        elif os.path.isfile(input.file):
+            return input.file
+
+        else:
+            raise ProcessError("This input is not supported")
+
+    def process_input(multi_input):
+        """Process a list of inputs
+
+        Each set of inputs from the outer function may or may not have multiple
+        entries. The `multi_input` is just a list of Complex or Literal inputs
+        that we iterate over.
+        """
+        first, *_ = multi_input
+        info = first.json
+        processor = process_literal if info["type"] == "literal" else process_complex
+
+        return [processor(input) for input in multi_input]
+
+    return {identifier: process_input(input) for identifier, input in inputs.items()}

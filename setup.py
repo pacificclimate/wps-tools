@@ -33,7 +33,7 @@ setup(
     packages=["wps_tools"],
     package_data={
         "wps-tools": ["tests/data/*.nc", "tests/processes/*.py"],
-        "tests": ["data/*.nc", "processes/*.py"],
+        "tests": ["tests/data/*", "processes/*.py"],
     },
     include_package_data=True,
     install_requires=install_requires,
