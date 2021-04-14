@@ -107,7 +107,7 @@ def collect_args(inputs, workdir):
 
     def process_complex(input):
         """Handler for ComplexInputs"""
-        if vars(input)["identifier"] == "csv":
+        if "csv" in vars(input)["identifier"]:
             return input.stream
 
         elif vars(input)["_url"] != None:
