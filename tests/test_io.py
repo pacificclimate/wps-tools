@@ -8,7 +8,9 @@ from wps_tools.testing import run_wps_process
 
 def run_args_collection(wps_test_process_multi_input, file, csv, argc):
     params = (
-        ";".join([f"file={nc}" for nc in file]) + f';csv="{csv}"' + f";argc={argc};"
+        ";".join([f"file={nc}" for nc in file])
+        + f';csv_input="{csv}"'
+        + f";argc={argc};"
     )
     run_wps_process(wps_test_process_multi_input, params)
 
@@ -18,7 +20,7 @@ def run_args_collection(wps_test_process_multi_input, file, csv, argc):
     [
         (
             [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
-            {"file": 2, "csv": 1, "argc": 1},
+            {"file": 2, "csv_input": 1, "argc": 1},
         )
     ],
 )
@@ -41,7 +43,7 @@ def test_collect_args_local(wps_test_process_multi_input, file, csv_data, argc):
             [
                 "https://raw.githubusercontent.com/pacificclimate/sandpiper/master/tests/data/tiny_rules.csv",
             ],
-            {"file": 1, "csv": 1, "argc": 1},
+            {"file": 1, "csv_input": 1, "argc": 1},
         )
     ],
 )

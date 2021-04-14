@@ -34,7 +34,7 @@ class TestProcessMultiInput(Process):
                 supported_formats=[FORMATS.NETCDF, FORMATS.DODS],
             ),
             ComplexInput(
-                "csv",
+                "csv_input",
                 "CSV",
                 max_occurs=1,
                 abstract="CSV document",
