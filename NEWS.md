@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.3.1
+*2021 Apr 14*
+* Update `collect_args` to allow for multiple CSVs in one process
+
 ## 1.3.0
 *2021 Apr 8*
 * Add stream handling to `collect_args`
