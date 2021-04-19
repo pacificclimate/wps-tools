@@ -148,7 +148,7 @@ class MockResponse:
 
 
 def mock_metalink_respose(*args, **kwargs):
-    outfiles = ["gsl.json", "expected_gsl.rda"]
+    outfiles = ["gsl.json", "tiny_daily_pr.nc"]
     metalink = build_meta_link(
         varname="climo",
         desc="Climatology",
