@@ -1,13 +1,10 @@
 import pytest
 from netCDF4._netCDF4 import Dataset
-from rpy2.robjects.vectors import FloatVector
 
 from wps_tools.output_handling import (
     nc_to_dataset,
     json_to_dict,
-    vector_to_dict,
     txt_to_string,
-    get_robjects,
     auto_construct_outputs,
     get_metalink_content,
 )
@@ -39,27 +36,6 @@ def test_json_to_dict(url):
     assert len(output_dict) > 0
 
 
-@pytest.mark.parametrize(
-    ("url", "vector_name"), [(local_path("expected_gsl.rda"), "expected_gsl_vector")],
-)
-def test_vector_to_dict(url, vector_name):
-    output_dict = vector_to_dict(url, vector_name)
-
-    assert isinstance(output_dict, dict)
-    assert len(output_dict) > 0
-
-
-@pytest.mark.parametrize(
-    ("url", "nonvector_name"), [(local_path("matrix.rda"), "mdat")],
-)
-def test_vector_to_dict_err(url, nonvector_name):
-    with pytest.raises(TypeError) as e:
-        vector_to_dict(url, nonvector_name)
-        assert (
-            str(vars(e)["_excinfo"][1]) == f"{e}: {vector_name} is not a named vector"
-        )
-
-
 def txt_to_string_test(url):
     output_str = txt_to_string(url)
 
@@ -83,17 +59,6 @@ def test_txt_to_string_online(url):
 def test_txt_to_string_local(txt_file):
     txt_to_string_test(f"file://{txt_file.name}")
     txt_file.close()
-
-
-@pytest.mark.parametrize(
-    ("url"), [(local_path("expected_gsl.rda")), (local_path("expected_days_data.rda"))]
-)
-def test_get_robjects(url):
-    objects = get_robjects(url)
-
-    assert len(objects) > 0
-    for ob in objects:
-        assert isinstance(ob, str)
 
 
 def auto_construct_outputs_test(outputs, expected_types):
@@ -120,8 +85,7 @@ def test_auto_construct_outputs_online(outputs, expected_types):
 
 
 @pytest.mark.parametrize(
-    ("outputs", "expected_types"),
-    [([local_path("expected_gsl.rda"), "test string"], [FloatVector, str, str],)],
+    ("outputs", "expected_types"), [(["test string"], [str, str],)],
 )
 def test_auto_construct_outputs_local(txt_file, outputs, expected_types):
     outputs.append(f"file://{txt_file.name}")
@@ -130,11 +94,8 @@ def test_auto_construct_outputs_local(txt_file, outputs, expected_types):
 
 
 @pytest.mark.parametrize(
-    ("output", "expected_types"),
-    [("https://test_metalinks.meta4", [dict, FloatVector])],
+    ("output"), ["https://test_metalinks.meta4"],
 )
-def test_get_metalink_content(mock_metalink, output, expected_types):
+def test_get_metalink_content(mock_metalink, output):
     for file_ in get_metalink_content(output):
-        assert file_.endswith((".json", ".rda"))
-
-    auto_construct_outputs_test([output], expected_types)
+        assert file_.endswith((".json", ".nc"))
