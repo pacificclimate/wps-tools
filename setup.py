@@ -2,7 +2,7 @@ import sys
 from setuptools import setup
 
 
-__version__ = (1, 3, 1)
+__version__ = (1, 4, 0)
 
 
 # Detail different installation scenarios

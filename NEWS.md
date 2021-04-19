@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 1.4.0
+*2021 Apr 19*
+* Remove `R` code from `output_handling`
+
 ## 1.3.1
 *2021 Apr 14*
 * Update `collect_args` to allow for multiple CSVs in one process
