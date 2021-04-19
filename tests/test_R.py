@@ -7,7 +7,9 @@ from wps_tools.R import (
     load_rdata_to_python,
     save_python_to_rdata,
     r_valid_name,
+    get_robjects,
 )
+from wps_tools.testing import local_path
 from pywps.app.exceptions import ProcessError
 
 
@@ -79,3 +81,14 @@ def test_r_valid_name_err(name):
     with pytest.raises(ProcessError) as e:
         r_valid_name(name)
     assert str(vars(e)["_excinfo"][1]) == "Your vector name is not a valid R name"
+
+
+@pytest.mark.parametrize(
+    ("url"), [(local_path("expected_gsl.rda")), (local_path("expected_days_data.rda"))]
+)
+def test_get_robjects(url):
+    objects = get_robjects(url)
+
+    assert len(objects) > 0
+    for ob in objects:
+        assert isinstance(ob, str)

@@ -3,6 +3,8 @@ from rpy2 import robjects
 from rpy2.robjects.packages import isinstalled, importr
 from rpy2.rinterface_lib.embedded import RRuntimeError
 from pywps.app.exceptions import ProcessError
+from tempfile import NamedTemporaryFile
+from urllib.request import urlretrieve
 
 
 def get_package(package):
@@ -73,3 +75,22 @@ def r_valid_name(robj_name):
     base = get_package("base")
     if base.make_names(robj_name)[0] != robj_name:
         raise ProcessError(msg="Your vector name is not a valid R name")
+
+
+def get_robjects(url):
+    """
+    Get a list of all the objects stored in an rda file
+
+    Parameters:
+        url (str): file or http url path to a rda file
+
+    Returns:
+        list: a list of the names of objects stored in an rda file
+    """
+    with NamedTemporaryFile(
+        suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
+    ) as r_file:
+        urlretrieve(url, r_file.name)
+        robjs = list(robjects.r(f"load(file='{r_file.name}')"))
+
+    return robjs
