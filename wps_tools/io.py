@@ -110,7 +110,7 @@ def collect_args(inputs, workdir):
         if "csv" in vars(input)["identifier"]:
             return input.stream
 
-        elif vars(input)["_url"] != None:
+        elif "_url" in vars(input).keys() and vars(input)["_url"] != None:
             return url_handler(workdir, input.url)
 
         elif os.path.isfile(input.file):
