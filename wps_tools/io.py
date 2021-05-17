@@ -130,6 +130,11 @@ def collect_args(inputs, workdir):
         info = first.json
         processor = process_literal if info["type"] == "literal" else process_complex
 
-        return [processor(input) for input in multi_input]
+        if info["min_occurs"] > 1 or info["max_occurs"] > 1:
+            return [processor(input) for input in multi_input]
+
+        else:
+            input, = multi_input
+            return processor(input)
 
     return {identifier: process_input(input) for identifier, input in inputs.items()}
