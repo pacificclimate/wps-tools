@@ -81,6 +81,28 @@ rda_output = ComplexOutput(
 )
 
 
+def process_inputs_alpha(request_inputs, expected_inputs, workdir):
+    """Process bird inputs and return them in alphabetical order
+
+    This is meant to make it easier to track larger lists of inputs. It will
+    also add in any missing inputs that were not given in the process.
+    """
+    requested = request_inputs.keys()
+    all = [expected.identifier for expected in expected_inputs]
+    missing_inputs = list(set(all) - set(requested))
+
+    collected = collect_args(request_inputs, workdir)
+    for missing_input in missing_inputs:
+        collected[missing_input] = None
+
+    # NOTE: If you want to find out the order of the variables, just uncomment
+    #       these lines.
+    # var_order = [name for name, value in sorted(collected.items())]
+    # print(var_order)
+
+    return [value for name, value in sorted(collected.items())]
+
+
 def collect_args(inputs, workdir):
     """Collects PyWPS input arguments
 
@@ -138,20 +160,3 @@ def collect_args(inputs, workdir):
             return processor(input)
 
     return {identifier: process_input(input) for identifier, input in inputs.items()}
-
-
-def process_inputs(request_inputs, expected_inputs, workdir):
-    requested = request_inputs.keys()
-    all = [expected.identifier for expected in expected_inputs]
-    missing_inputs = list(set(all) - set(requested))
-
-    collected = collect_args(request_inputs, workdir)
-    for missing_input in missing_inputs:
-        collected[missing_input] = None
-
-    # NOTE: If you want to find out the order of the variables, just uncomment
-    #       these lines.
-    var_order = [name for name, value in sorted(collected.items())]
-    print(var_order)
-
-    return [value for name, value in sorted(collected.items())]
