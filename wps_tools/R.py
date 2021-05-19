@@ -98,6 +98,7 @@ def rda_to_vector(url, vector_name):
 
 
 def construct_r_out(outputs):
+    """Build list of R outputs"""
     r_out = []
     for value in outputs:
         if value.endswith(".rda") or value.endswith(".rdata"):
@@ -125,6 +126,7 @@ def get_robjects(url):
 
 
 def test_rda_output(url, vector_name, expected_file, expected_vector_name):
+    """Testing method to check rda results"""
     output_vector = rda_to_vector(url, vector_name)
     local_path = resource_filename("tests", f"data/{expected_file}")
     expected_url = f"file://{local_path}"
