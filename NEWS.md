@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 2.0.0
+*2021 May 19*
+* Compatibility fixes
+* Add new `R` handling methods
+
 ## 1.4.0
 *2021 Apr 19*
 * Remove `R` code from `output_handling`
