@@ -5,6 +5,7 @@ from rpy2.rinterface_lib.embedded import RRuntimeError
 from pywps.app.exceptions import ProcessError
 from tempfile import NamedTemporaryFile
 from urllib.request import urlretrieve
+from pkg_resources import resource_filename
 
 
 def get_package(package):
@@ -77,6 +78,34 @@ def r_valid_name(robj_name):
         raise ProcessError(msg="Your vector name is not a valid R name")
 
 
+def rda_to_vector(url, vector_name):
+    """
+    Access content from a rda url file as a Rpy2 vector object
+    Parameters:
+        url (str): file or http url path to a rda file
+        vector_name (str): the name the vector was given when it
+            was saved to the rda file
+    Returns:
+        Rpy2 object: Rpy2 representation of the R object "vector_name"
+    """
+    with NamedTemporaryFile(
+        suffix=".rda", prefix="tmp_copy", dir="/tmp", delete=True, mode="wb"
+    ) as r_file:
+        urlretrieve(url, r_file.name)
+        vector = load_rdata_to_python(r_file.name, vector_name)
+
+    return vector
+
+
+def construct_r_out(outputs):
+    """Build list of R outputs"""
+    r_out = []
+    for value in outputs:
+        if value.endswith(".rda") or value.endswith(".rdata"):
+            r_out.append([rda_to_vector(value, obj) for obj in get_robjects(value)])
+    return r_out
+
+
 def get_robjects(url):
     """
     Get a list of all the objects stored in an rda file
@@ -94,3 +123,17 @@ def get_robjects(url):
         robjs = list(robjects.r(f"load(file='{r_file.name}')"))
 
     return robjs
+
+
+def test_rda_output(url, vector_name, expected_file, expected_vector_name):
+    """Testing method to check rda results"""
+    output_vector = rda_to_vector(url, vector_name)
+    local_path = resource_filename("tests", f"data/{expected_file}")
+    expected_url = f"file://{local_path}"
+    expected_vector = rda_to_vector(expected_url, expected_vector_name)
+
+    for index in range(len(expected_vector)):
+        assert str(output_vector[index]) == str(expected_vector[index])
+
+    # Clear R global env
+    robjects.r("rm(list=ls())")

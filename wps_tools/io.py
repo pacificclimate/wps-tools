@@ -81,6 +81,28 @@ rda_output = ComplexOutput(
 )
 
 
+def process_inputs_alpha(request_inputs, expected_inputs, workdir):
+    """Process bird inputs and return them in alphabetical order
+
+    This is meant to make it easier to track larger lists of inputs. It will
+    also add in any missing inputs that were not given in the process.
+    """
+    requested = request_inputs.keys()
+    all = [expected.identifier for expected in expected_inputs]
+    missing_inputs = list(set(all) - set(requested))
+
+    collected = collect_args(request_inputs, workdir)
+    for missing_input in missing_inputs:
+        collected[missing_input] = None
+
+    # NOTE: If you want to find out the order of the variables, just uncomment
+    #       these lines.
+    # var_order = [name for name, value in sorted(collected.items())]
+    # print(var_order)
+
+    return [value for name, value in sorted(collected.items())]
+
+
 def collect_args(inputs, workdir):
     """Collects PyWPS input arguments
 
@@ -110,7 +132,7 @@ def collect_args(inputs, workdir):
         if "csv" in vars(input)["identifier"]:
             return input.stream
 
-        elif vars(input)["_url"] != None:
+        elif "_url" in vars(input).keys() and vars(input)["_url"] != None:
             return url_handler(workdir, input.url)
 
         elif os.path.isfile(input.file):
@@ -130,6 +152,11 @@ def collect_args(inputs, workdir):
         info = first.json
         processor = process_literal if info["type"] == "literal" else process_complex
 
-        return [processor(input) for input in multi_input]
+        if info["min_occurs"] > 1 or info["max_occurs"] > 1:
+            return [processor(input) for input in multi_input]
+
+        else:
+            (input,) = multi_input
+            return processor(input)
 
     return {identifier: process_input(input) for identifier, input in inputs.items()}

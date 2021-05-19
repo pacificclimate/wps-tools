@@ -72,10 +72,16 @@ class TestProcessMultiInput(Process):
         collected = collect_args(request.inputs, self.workdir)
         count_dict = eval(request.inputs["argc"][0].data)
 
+        collected_argc = 0
         for input_ in collected.keys():
-            assert len(collected[input_]) == count_dict[input_]
+            if isinstance(collected[input_], list):
+                collected_argc += len(collected[input_])
+                assert len(collected[input_]) == count_dict[input_]
 
-        collected_argc = sum([len(collected[k]) for k in collected.keys()])
+            else:
+                collected_argc += 1
+                assert type(collected[input_]) != list
+
         response.outputs["collected_argc"].data = collected_argc
         return response
 
