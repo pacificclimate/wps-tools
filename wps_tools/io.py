@@ -156,7 +156,7 @@ def collect_args(inputs, workdir):
             return [processor(input) for input in multi_input]
 
         else:
-            input, = multi_input
+            (input,) = multi_input
             return processor(input)
 
     return {identifier: process_input(input) for identifier, input in inputs.items()}
