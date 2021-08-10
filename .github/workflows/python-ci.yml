@@ -31,4 +31,4 @@ jobs:
       run: |
         pipenv run py.test -m "not online and not slow" -v
     - name: Code Quality
-      run: black . --check
+      run: pipenv run black . --check
