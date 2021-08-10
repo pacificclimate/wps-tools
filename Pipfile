@@ -20,3 +20,7 @@ python_version = "3.8"
 [dev-packages]
 pytest = "==5.4.3"
 black = "==19.10b0"
+Sphinx = "==2.4.4"
+setuptools = "*"
+wheel = "*"
+twine = "*"
