@@ -31,10 +31,9 @@ Clone the repo onto the target machine. Python installation should be done using
 pipenv install
 ```
 
-This also creates a virtual environment that can be activated using `pipenv shell`. The general installation will leave out the `rpy2` requirement. This is done to reduce the dependency load on the birds, specifically with `R` installation. If you wish to use the `R` capabilities, you can run
-
+This also creates a virtual environment that can be activated using 
 ```bash
-pipenv install rpy2==3.3.6
+pipenv shell
 ```
 
 ## Installation and Usage as Package
