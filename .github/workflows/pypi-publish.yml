@@ -16,6 +16,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        pip install -U pip
+        pip install Sphinx==2.4.4 setuptools wheel twine
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.pcic_at_pypi_username }}
