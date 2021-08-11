@@ -21,7 +21,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install cdo
         pip install -U pip pipenv
-        pipenv install
         pipenv install --dev
     - name: Test with pytest (full)
       if: github.ref == 'refs/heads/master'
