@@ -17,7 +17,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install pipenv
+    - name: Install cdo and pipenv
       run: |
         sudo apt-get update
         sudo apt-get install cdo
