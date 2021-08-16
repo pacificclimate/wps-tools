@@ -25,19 +25,16 @@ These functions gather PyWPS inputs, build PyWPS outputs, and handle logging inf
 
 ## Installation as GitHub Repository
 
-Clone the repo onto the target machine. Python installation should be done in a python3 virtual environment and activated as follows:
+Clone the repo onto the target machine. Python installation should be done using the `pipenv` tool. The required dependencies can be installed using 
 
 ```bash
-$ python3 -m venv venv
-$ source venv/bin/activate
-(venv) $ pip install .
+pipenv install
 ```
-The general installation using `.` will leave out the `rpy2` requirement. This is done to reduce the dependency load on the birds, specifically with `R` installation. If you wish to use the `R` capabilities use the `.[r]` or `.[complete]` installation scenarios.
 
-In total there are 3 different extra installations available:
- - `[complete]` - everything needed to use the full package
- - `[r]` - base requirements + those needed to run the `R` methods
- - `[test]` - everything needed for testing
+This also creates a virtual environment that can be activated using 
+```bash
+pipenv shell
+```
 
 ## Installation and Usage as Package
 
@@ -62,7 +59,7 @@ Once the repository is cloned and the required development packages are installe
 More Python packages are required to run the tests and they can be installed by executing
 
 ```bash
-pip install .[test]
+pipenv install --dev
 ```
 
 The entire test suite can then be run by executing
