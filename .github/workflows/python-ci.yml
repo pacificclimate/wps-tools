@@ -38,7 +38,7 @@ jobs:
       if: ${{ matrix.python-version != '3.8' }}
       run: |
         mv Pipfile.lock do-not-use
-        pipenv intall --python ${{ matrix.python-version }} --dev
+        pipenv install --python ${{ matrix.python-version }} --dev
 
     - name: Test with pytest (full)
       if: github.ref == 'refs/heads/master'
