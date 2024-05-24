@@ -36,12 +36,17 @@ pywps = ">=4.2.6"
 nchelpers = { version = "^5.5.11", source = "pcic" }
 netCDF4 = ">=1.5.4"
 beautifulsoup4 = "==4.9.3"
-rpy2 = "==3.3.6"
+rpy2 = {version = "==3.3.6", optional = true }
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
 black = "^22.3.0"
+
+[tool.poetry.extras]
+r = ["rpy2"]
+test = ["pytest", "black"]
+complete = ["rpy2", "pytest", "black"]
 
 [build-system]
 requires = ["poetry-core"]
