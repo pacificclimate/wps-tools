@@ -66,7 +66,7 @@ def test_get_target_url_local(mock_local_url, bird, expected):
         ("chickadee"),
     ],
 )
-@pytest.mark.parametrize("expected", ["http://docker-dev03.pcic.uvic.ca/somebird"])
+@pytest.mark.parametrize("expected", ["http://marble-dev01.pcic.uvic.ca/somebird"])
 def test_get_target_url_dev(mock_dev_url, bird, expected):
     assert get_target_url(bird) == expected
 
