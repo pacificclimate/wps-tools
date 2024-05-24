@@ -34,7 +34,7 @@ jobs:
       if: ${{ steps.cache-poetry.outputs.cache-hit != 'true' }}
       run: |
         poetry env use python${{ matrix.python-version }}
-        poetry install --with=dev
+        poetry install --extras "complete"
         poetry run pip install -e .
 
     - name: Test with pytest (full)
