@@ -31,6 +31,11 @@ Clone the repo onto the target machine. Python installation should be done using
 poetry install
 ```
 
+The additional R dependencies can be installed using
+```bash
+poetry install --extras "r"
+```
+
 This also creates a virtual environment that can be activated using 
 ```bash
 poetry shell
@@ -59,7 +64,7 @@ Once the repository is cloned and the required development packages are installe
 More Python packages are required to run the tests and they can be installed by executing
 
 ```bash
-poetry install --group dev
+poetry install --extras "complete"
 ```
 
 The entire test suite can then be run by executing
