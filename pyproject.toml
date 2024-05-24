@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "wps-tools"
+version = "2.0.0"
+description = "A collection of modules used to help create wps processes"
+authors = [
+    "Nikola Rados",
+    "Sangwon Lim",
+    "Cairo Sanders",
+    "Eric Yvorchuk <eyvorchuk@uvic.ca>",
+]
+readme = "README.md"
+homepage = "http://www.pacificclimate.org/"
+repository = "https://github.com/pacificclimate/wps-tools"
+classifiers=[
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+packages = [
+    {include = "wps_tools"},
+]
+include = [
+    "tests/data/*.nc",
+    "tests/processes/*.py",
+]
+
+[[tool.poetry.source]]
+name = "pcic"
+url = "https://pypi.pacificclimate.org/simple"
+priority = "supplemental"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4"
+pywps = ">=4.2.6"
+nchelpers = { version = "^5.5.11", source = "pcic" }
+netCDF4 = ">=1.5.4"
+beautifulsoup4 = "==4.9.3"
+rpy2 = "==3.3.6"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.1"
+black = "^22.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "online: marks tests that use online resources (deselect with '-m \"not online\"')",
+    "slow: marks tests that are slow (deselect with '-m \"not slow\"')",
+]
