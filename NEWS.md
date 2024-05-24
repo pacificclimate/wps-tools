@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 2.1.0
+*2024 May 24*
+* Upgrade supported Python versions and change installation tool from `pipenv` to `poetry`
+
 ## 2.0.0
 *2021 May 19*
 * Compatibility fixes
