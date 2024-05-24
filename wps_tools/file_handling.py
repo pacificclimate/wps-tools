@@ -76,7 +76,7 @@ def get_filepaths(nc_input):
 
     Each path in nc_input is checked to determine if it is an OpenDAP url. If so,
     then the url is appended to the path list. If not, then whether or not it's a valid
-    netcdf file is checked. If so, then the path is appended to the list. If not, then 
+    netcdf file is checked. If so, then the path is appended to the list. If not, then
     a ProcessError is raised due to an invalid input.
 
     Parameters:
@@ -162,16 +162,16 @@ def build_meta_link(
 
 def copy_http_content(http, file):
     """
-        This function is implemented to copy the content of a file passed
-        as an http address to a local file.
+    This function is implemented to copy the content of a file passed
+    as an http address to a local file.
 
-        Parameters:
-            http (str): http address containing the desired content
-            file (file object): path to the
-                file that the content will be copied to
-        Returns:
-            Path to the copied file in /tmp directory
-        """
+    Parameters:
+        http (str): http address containing the desired content
+        file (file object): path to the
+            file that the content will be copied to
+    Returns:
+        Path to the copied file in /tmp directory
+    """
     file.write(get(http).content)
     return file.name
 

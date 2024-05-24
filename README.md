@@ -25,15 +25,20 @@ These functions gather PyWPS inputs, build PyWPS outputs, and handle logging inf
 
 ## Installation as GitHub Repository
 
-Clone the repo onto the target machine. Python installation should be done using the `pipenv` tool. The required dependencies can be installed using 
+Clone the repo onto the target machine. Python installation should be done using the `poetry` tool. The required dependencies can be installed using 
 
 ```bash
-pipenv install
+poetry install
+```
+
+The additional R dependencies can be installed using
+```bash
+poetry install --extras "r"
 ```
 
 This also creates a virtual environment that can be activated using 
 ```bash
-pipenv shell
+poetry shell
 ```
 
 ## Installation and Usage as Package
@@ -59,7 +64,7 @@ Once the repository is cloned and the required development packages are installe
 More Python packages are required to run the tests and they can be installed by executing
 
 ```bash
-pipenv install --dev
+poetry install --extras "complete"
 ```
 
 The entire test suite can then be run by executing
@@ -78,14 +83,14 @@ pytest tests/test_utils.py::test_is_opendap_url
 
 To create a versioned release:
 
-1. Increment `__version__` in `setup`
+1. Increment `version` in `pyproject.toml`
 2. Summarize the changes from the last release in `NEWS.md`
 3. Commit these changes, then tag the release:
 
   ```bash
-git add setup NEWS.md
+git add pyproject.toml NEWS.md
 git commit -m"Bump to version x.x.x"
 git tag -a -m"x.x.x" x.x.x
 git push --follow-tags
   ```
-4. [Github Actions](https://github.com/pacificclimate/wps-tools/blob/i16-update-documentation/.github/workflows/pypi-publish.yml) will automatically build and publish the package to our pypi server
+4. [Github Actions](https://github.com/pacificclimate/wps-tools/blob/master/.github/workflows/pypi-publish.yml) will automatically build and publish the package to our pypi server

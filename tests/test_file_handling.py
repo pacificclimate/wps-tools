@@ -26,7 +26,11 @@ nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
 
 @pytest.mark.online
 @pytest.mark.parametrize(
-    ("url"), [url_path(nc_file, "opendap"), local_path(nc_file),],
+    ("url"),
+    [
+        url_path(nc_file, "opendap"),
+        local_path(nc_file),
+    ],
 )
 def test_is_opendap_url(url):
     if "docker" in url:
@@ -38,7 +42,8 @@ def test_is_opendap_url(url):
 
 
 @pytest.mark.parametrize(
-    ("nc_input"), [[NCInput(file=local_path(nc_file))]],
+    ("nc_input"),
+    [[NCInput(file=local_path(nc_file))]],
 )
 def test_get_filepaths_local(nc_input):
     paths = get_filepaths(nc_input)
@@ -52,7 +57,10 @@ def test_get_filepaths_local(nc_input):
     ("nc_input"),
     [
         [NCInput(url=url_path(nc_file, "opendap"))],
-        [NCInput(file=local_path(nc_file)), NCInput(url=url_path(nc_file, "opendap")),],
+        [
+            NCInput(file=local_path(nc_file)),
+            NCInput(url=url_path(nc_file, "opendap")),
+        ],
     ],
 )
 def test_get_filepaths_online(nc_input):
@@ -119,7 +127,10 @@ def test_copy_http_content(http, expected):
 @pytest.mark.online
 @pytest.mark.parametrize(
     ("url_type", "url"),
-    [("http", url_path(nc_file, "http")), ("opendap", url_path(nc_file, "opendap")),],
+    [
+        ("http", url_path(nc_file, "http")),
+        ("opendap", url_path(nc_file, "opendap")),
+    ],
 )
 def test_url_handler(url_type, url):
     processed = url_handler("/tmp", url)

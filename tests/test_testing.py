@@ -44,7 +44,13 @@ def test_run_wps_process(wps_test_process, string):
 
 
 @pytest.mark.parametrize(
-    "bird", [("thunderbird"), ("sandpiper"), ("osprey"), ("chickadee"),]
+    "bird",
+    [
+        ("thunderbird"),
+        ("sandpiper"),
+        ("osprey"),
+        ("chickadee"),
+    ],
 )
 @pytest.mark.parametrize("expected", ["http://localhost:5000/wps"])
 def test_get_target_url_local(mock_local_url, bird, expected):
@@ -52,7 +58,13 @@ def test_get_target_url_local(mock_local_url, bird, expected):
 
 
 @pytest.mark.parametrize(
-    "bird", [("thunderbird"), ("sandpiper"), ("osprey"), ("chickadee"),]
+    "bird",
+    [
+        ("thunderbird"),
+        ("sandpiper"),
+        ("osprey"),
+        ("chickadee"),
+    ],
 )
 @pytest.mark.parametrize("expected", ["http://docker-dev03.pcic.uvic.ca/somebird"])
 def test_get_target_url_dev(mock_dev_url, bird, expected):
@@ -60,7 +72,13 @@ def test_get_target_url_dev(mock_dev_url, bird, expected):
 
 
 @pytest.mark.parametrize(
-    "bird", [("thunderbird"), ("sandpiper"), ("osprey"), ("chickadee"),]
+    "bird",
+    [
+        ("thunderbird"),
+        ("sandpiper"),
+        ("osprey"),
+        ("chickadee"),
+    ],
 )
 def test_get_target_url(bird):
     assert bird in get_target_url(bird)
