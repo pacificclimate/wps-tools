@@ -14,7 +14,8 @@ from pywps.app.exceptions import ProcessError
 
 
 @pytest.mark.parametrize(
-    ("package"), [("base"), ("utils")],
+    ("package"),
+    [("base"), ("utils")],
 )
 def test_get_package(package):
     pkg = get_package(package)
@@ -41,7 +42,9 @@ def test_load_rdata_to_python(r_file, r_object_name):
 
 @pytest.mark.parametrize(
     ("file_", "obj_name"),
-    [(resource_filename("tests", "data/expected_days_data.rda"), "autumn_days"),],
+    [
+        (resource_filename("tests", "data/expected_days_data.rda"), "autumn_days"),
+    ],
 )
 def test_load_rdata_to_python_err(file_, obj_name):
     with pytest.raises(ProcessError) as e:
@@ -53,7 +56,11 @@ def test_load_rdata_to_python_err(file_, obj_name):
 
 
 @pytest.mark.parametrize(
-    ("r_name", "py_var"), [("str_ex", "string"), ("int_ex", 300),],
+    ("r_name", "py_var"),
+    [
+        ("str_ex", "string"),
+        ("int_ex", 300),
+    ],
 )
 def test_save_python_to_rdata(r_name, py_var):
     with NamedTemporaryFile(
@@ -68,14 +75,16 @@ def test_save_python_to_rdata(r_name, py_var):
 
 
 @pytest.mark.parametrize(
-    ("name"), [("hello.world"), ("r_name")],
+    ("name"),
+    [("hello.world"), ("r_name")],
 )
 def test_r_valid_name(name):
     r_valid_name(name)
 
 
 @pytest.mark.parametrize(
-    ("name"), [(".2"), ("if"), ("two words")],
+    ("name"),
+    [(".2"), ("if"), ("two words")],
 )
 def test_r_valid_name_err(name):
     with pytest.raises(ProcessError) as e:

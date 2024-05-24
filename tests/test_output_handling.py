@@ -27,7 +27,8 @@ def test_nc_to_dataset(url):
 
 
 @pytest.mark.parametrize(
-    ("url"), [local_path("gsl.json")],
+    ("url"),
+    [local_path("gsl.json")],
 )
 def test_json_to_dict(url):
     output_dict = json_to_dict(url)
@@ -85,7 +86,13 @@ def test_auto_construct_outputs_online(outputs, expected_types):
 
 
 @pytest.mark.parametrize(
-    ("outputs", "expected_types"), [(["test string"], [str, str],)],
+    ("outputs", "expected_types"),
+    [
+        (
+            ["test string"],
+            [str, str],
+        )
+    ],
 )
 def test_auto_construct_outputs_local(txt_file, outputs, expected_types):
     outputs.append(f"file://{txt_file.name}")
@@ -94,7 +101,8 @@ def test_auto_construct_outputs_local(txt_file, outputs, expected_types):
 
 
 @pytest.mark.parametrize(
-    ("output"), ["https://test_metalinks.meta4"],
+    ("output"),
+    ["https://test_metalinks.meta4"],
 )
 def test_get_metalink_content(mock_metalink, output):
     for file_ in get_metalink_content(output):

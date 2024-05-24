@@ -19,7 +19,10 @@ def run_args_collection(wps_test_process_multi_input, file, csv, argc):
     ("file", "argc"),
     [
         (
-            [local_path("tiny_daily_pr.nc"), local_path("tiny_daily_prsn.nc"),],
+            [
+                local_path("tiny_daily_pr.nc"),
+                local_path("tiny_daily_prsn.nc"),
+            ],
             {"file": 2, "csv_input": 1, "argc": 1},
         )
     ],

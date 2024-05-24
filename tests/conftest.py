@@ -101,7 +101,10 @@ class TestProcess(Process):
         }
         inputs = [
             LiteralInput(
-                "string", "String", abstract="Enter string.", data_type="string",
+                "string",
+                "String",
+                abstract="Enter string.",
+                data_type="string",
             )
         ]
         outputs = [
