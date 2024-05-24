@@ -1,5 +1,9 @@
 # News / Release Notes
 
+## 2.1.1
+*2024 May 24*
+* Replace instances of `docker-dev03` with `marble-dev01`
+
 ## 2.1.0
 *2024 May 24*
 * Upgrade supported Python versions and change installation tool from `pipenv` to `poetry`
