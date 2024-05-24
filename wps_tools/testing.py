@@ -73,7 +73,7 @@ def url_path(sub_filepath, url_type, sub_dir="daccs"):
             f'Invalid sub directory "{sub_dir}": must be one of "daccs" or "climate_explorer_data_prep"'
         )
 
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/projects/comp_support/{path}/{sub_filepath}"
+    return f"https://marble-dev01.pcic.uvic.ca/twitcher/ows/proxy/thredds/{identifier}/datasets/storage/data/projects/comp_support/{path}/{sub_filepath}"
 
 
 def client_for(service):
@@ -138,4 +138,4 @@ def get_target_url(bird):
         if url:
             return url
 
-    return f"https://docker-dev03.pcic.uvic.ca/twitcher/ows/proxy/{bird}/wps"
+    return f"https://marble-dev01.pcic.uvic.ca/twitcher/ows/proxy/{bird}/wps"

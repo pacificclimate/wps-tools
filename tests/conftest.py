@@ -15,7 +15,7 @@ def mock_local_url(monkeypatch):
 
 @pytest.fixture
 def mock_dev_url(monkeypatch):
-    monkeypatch.setenv("DEV_URL", "http://docker-dev03.pcic.uvic.ca/somebird")
+    monkeypatch.setenv("DEV_URL", "http://marble-dev01.pcic.uvic.ca/somebird")
 
 
 LOGGER = logging.getLogger("PYWPS")

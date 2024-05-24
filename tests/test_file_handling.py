@@ -33,7 +33,7 @@ nc_file = "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
     ],
 )
 def test_is_opendap_url(url):
-    if "docker" in url:
+    if "marble" in url:
         assert is_opendap_url(url)  # Ensure function recognizes this is an opendap file
     else:
         assert not is_opendap_url(
