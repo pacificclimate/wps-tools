@@ -132,8 +132,10 @@ def collect_args(inputs, workdir):
         if "csv" in vars(input)["identifier"]:
             return input.stream
 
-        elif "_url" in vars(input).keys() and vars(input)["_url"] != None:
-            return url_handler(workdir, input.url)
+        # Check for a remote URL: try the new 'url' attribute, falling back to the legacy '_url'
+        url_val = getattr(input, "url", None) or getattr(input, "_url", None)
+        if url_val is not None:
+            return url_handler(workdir, url_val)
 
         elif os.path.isfile(input.file):
             return input.file
