@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 2.1.2
+*2025 Mar 5*
+* Compatibility fixes
+* Use ubuntu-24.04 runners
+
 ## 2.1.1
 *2024 May 24*
 * Replace instances of `docker-dev03` with `marble-dev01`
