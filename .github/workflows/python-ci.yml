@@ -36,6 +36,7 @@ jobs:
         poetry env use python${{ matrix.python-version }}
         poetry install --extras "complete"
         poetry run pip install -e .
+        poetry run pip install --upgrade pip setuptools
 
     - name: Test with pytest (full)
       if: github.ref == 'refs/heads/master'
