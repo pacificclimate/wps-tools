@@ -5,17 +5,23 @@ on: push
 jobs:
   test:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+    
+    - name: Install R and dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y r-base
+        echo "R installed successfully"
 
     - name: Install cdo and poetry
       run: |
@@ -25,7 +31,7 @@ jobs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - id: cache-poetry
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
@@ -36,6 +42,7 @@ jobs:
         poetry env use python${{ matrix.python-version }}
         poetry install --extras "complete"
         poetry run pip install -e .
+        poetry run pip install --upgrade pip setuptools
 
     - name: Test with pytest (full)
       if: github.ref == 'refs/heads/master'
