@@ -28,12 +28,18 @@ def url_handler(workdir, url):
         url (str): URL to be handled
 
     Returns:
-        url/local_file (str): URL/filepath with accessible data
+        url/local_file (str): URL/filepath with accessible data:
+        - For OPeNDAP URLs, return as-is.
+        - For file:// URLs, return the local file path.
+        - For HTTP(S), download the file to workdir and return the local path.
     """
+    parsed = urlparse(url)
     if is_opendap_url(url):
         # OPeNDAP
         return url
-    elif urlparse(url).scheme and urlparse(url).netloc:
+    elif parsed.scheme == "file":
+        return parsed.path
+    elif parsed.scheme and parsed.netloc:
         # HTTPServer or other
         local_file = os.path.join(workdir, url.split("/")[-1])
         urlretrieve(url, local_file)
