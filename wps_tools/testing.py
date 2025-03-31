@@ -1,11 +1,10 @@
 import os
 import io
 import pytest
-from contextlib import redirect_stderr
 from pkg_resources import resource_filename
 from pywps import Service
 from pywps.app.basic import get_xpath_ns
-from pywps.tests import WpsClient, WpsTestResponse, assert_response_success
+from pywps.tests import WpsClient, WpsTestResponse
 
 VERSION = "1.0.0"
 xpath_ns = get_xpath_ns(VERSION)
@@ -42,7 +41,7 @@ def local_path(sub_filepath):
     Returns:
         str: Absolute local file path
     """
-    return f"file:///{resource_filename('tests', 'data/' + sub_filepath)}"
+    return f"file://{resource_filename('tests', 'data/' + sub_filepath)}"
 
 
 def url_path(sub_filepath, url_type, sub_dir="daccs"):
@@ -108,24 +107,14 @@ def run_wps_process(process, params):
         identifier=process.identifier,
         datainputs=datainputs,
     )
-    assert_response_success(resp)
+    return resp
 
 
 def process_err_test(process, datainputs):
-    """Redirects stderr and checks it for 'ProcessesError'.
-    Any errors from run_wps_process appear in the stderr
-    and the reponse status report, but are not actually raised.
-
-    Parameters:
-        process (Process): Process name to run
-            (eg/ 'ProcessName' NOT 'ProcessName()')
-        datainputs (str): Process parameters
-    """
-    err = io.StringIO()
-    with redirect_stderr(err), pytest.raises(Exception):
-        run_wps_process(process(), datainputs)
-
-    assert "pywps.app.exceptions.ProcessError" in err.getvalue()
+    resp = run_wps_process(process(), datainputs)
+    # Check that the response contains a ProcessFailed element
+    failed = resp.xpath("/wps:ExecuteResponse/wps:Status/wps:ProcessFailed")
+    assert len(failed) == 1, f"Expected ProcessFailed, got {resp.response}"
 
 
 def get_target_url(bird):
