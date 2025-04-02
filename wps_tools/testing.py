@@ -111,6 +111,13 @@ def run_wps_process(process, params):
 
 
 def process_err_test(process, datainputs):
+    """Runs a WPS process and checks that it fails with a ProcessFailed response.
+
+    Parameters:
+    process (Process): Process name to run
+        (eg/ 'ProcessName' NOT 'ProcessName()')
+    datainputs (str): Process parameters
+    """
     resp = run_wps_process(process(), datainputs)
     # Check that the response contains a ProcessFailed element
     failed = resp.xpath("/wps:ExecuteResponse/wps:Status/wps:ProcessFailed")
