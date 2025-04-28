@@ -1,7 +1,7 @@
 import os
 import io
 import pytest
-from pkg_resources import resource_filename
+from importlib.resources import files
 from pywps import Service
 from pywps.app.basic import get_xpath_ns
 from pywps.tests import WpsClient, WpsTestResponse
@@ -41,7 +41,9 @@ def local_path(sub_filepath):
     Returns:
         str: Absolute local file path
     """
-    return f"file://{resource_filename('tests', 'data/' + sub_filepath)}"
+    data_dir = files("tests") / "data"
+    full_path = (data_dir / sub_filepath).resolve()
+    return f"file://{full_path}"
 
 
 def url_path(sub_filepath, url_type, sub_dir="daccs"):

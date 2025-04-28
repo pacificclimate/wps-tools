@@ -75,8 +75,8 @@ def get_metalink_content(url):
 
     req = requests.get(url)
     metalinks = BeautifulSoup(
-        BeautifulSoup(req.content.decode("utf-8"), features="lxml").prettify(),
-        features="lxml",
+        BeautifulSoup(req.content.decode("utf-8"), features="xml").prettify(),
+        features="xml",
     ).find_all("metaurl")
 
     return [

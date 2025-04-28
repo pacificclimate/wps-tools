@@ -1,5 +1,5 @@
 import pytest
-from pkg_resources import resource_filename
+from importlib.resources import files
 from tempfile import NamedTemporaryFile
 from rpy2 import robjects
 from wps_tools.R import (
@@ -31,7 +31,7 @@ def test_get_package_err(package):
 
 @pytest.mark.parametrize(
     ("r_file", "r_object_name"),
-    [(resource_filename(__name__, "data/expected_gsl.rda"), "expected_gsl_vector")],
+    [((files("tests") / "data/expected_gsl.rda").resolve(), "expected_gsl_vector")],
 )
 def test_load_rdata_to_python(r_file, r_object_name):
     r2py_object = load_rdata_to_python(r_file, r_object_name)
@@ -43,7 +43,7 @@ def test_load_rdata_to_python(r_file, r_object_name):
 @pytest.mark.parametrize(
     ("file_", "obj_name"),
     [
-        (resource_filename("tests", "data/expected_days_data.rda"), "autumn_days"),
+        ((files("tests") / "data/expected_days_data.rda").resolve(), "autumn_days"),
     ],
 )
 def test_load_rdata_to_python_err(file_, obj_name):
