@@ -75,7 +75,7 @@ def test_get_filepaths_online(nc_input):
 
 
 @pytest.mark.parametrize(
-    ("varname", "outdir"), [("tiny", str((files(__name__) / "data").resolve()))]
+    ("varname", "outdir"), [("tiny", str((files("tests") / "data").resolve()))]
 )
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
@@ -99,7 +99,7 @@ def test_build_meta_link(outfiles, expected):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir=str((files(__name__) / "data").resolve()),
+        outdir=str((files("tests") / "data").resolve()),
     )
     assert all([elem in xml for elem in expected])
 
@@ -112,7 +112,7 @@ def test_build_meta_link(outfiles, expected):
             url_path(nc_file, "http"),
             str(
                 (
-                    files(__name__)
+                    files("tests")
                     / "data"
                     / "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
                 ).resolve()

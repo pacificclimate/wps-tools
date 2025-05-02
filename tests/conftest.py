@@ -162,7 +162,7 @@ def mock_metalink_respose(*args, **kwargs):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir=str((files(__name__) / "data").resolve()),
+        outdir=str((files("tests") / "data").resolve()),
     )
 
     if args[0] == "https://test_metalinks.meta4":
