@@ -162,7 +162,7 @@ def mock_metalink_respose(*args, **kwargs):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir=(files("tests") / "data").resolve(),
+        outdir=str((files(__name__) / "data").resolve()),
     )
 
     if args[0] == "https://test_metalinks.meta4":
@@ -176,4 +176,5 @@ def mock_metalink(monkeypatch):
 
 @pytest.fixture
 def csv_data():
-    return open((files("tests") / "data/tiny_rules.csv").resolve()).read()
+    with files("tests").joinpath("data/tiny_rules.csv").open() as f:
+        return f.read()

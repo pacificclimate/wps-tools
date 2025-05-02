@@ -128,7 +128,7 @@ def get_robjects(url):
 def test_rda_output(url, vector_name, expected_file, expected_vector_name):
     """Testing method to check rda results"""
     output_vector = rda_to_vector(url, vector_name)
-    local_path = (files("tests") / "data/{expected_file}").resolve()
+    local_path = str((files("tests") / "data" / expected_file).resolve())
     expected_url = f"file://{local_path}"
     expected_vector = rda_to_vector(expected_url, expected_vector_name)
 

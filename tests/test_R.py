@@ -31,7 +31,12 @@ def test_get_package_err(package):
 
 @pytest.mark.parametrize(
     ("r_file", "r_object_name"),
-    [((files("tests") / "data/expected_gsl.rda").resolve(), "expected_gsl_vector")],
+    [
+        (
+            str((files("tests") / "data/expected_gsl.rda").resolve()),
+            "expected_gsl_vector",
+        )
+    ],
 )
 def test_load_rdata_to_python(r_file, r_object_name):
     r2py_object = load_rdata_to_python(r_file, r_object_name)
@@ -43,7 +48,10 @@ def test_load_rdata_to_python(r_file, r_object_name):
 @pytest.mark.parametrize(
     ("file_", "obj_name"),
     [
-        ((files("tests") / "data/expected_days_data.rda").resolve(), "autumn_days"),
+        (
+            str((files("tests") / "data/expected_days_data.rda").resolve()),
+            "autumn_days",
+        ),
     ],
 )
 def test_load_rdata_to_python_err(file_, obj_name):

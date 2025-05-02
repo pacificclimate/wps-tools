@@ -75,7 +75,7 @@ def test_get_filepaths_online(nc_input):
 
 
 @pytest.mark.parametrize(
-    ("varname", "outdir"), [("tiny", (files("tests") / "data").resolve())]
+    ("varname", "outdir"), [("tiny", str((files(__name__) / "data").resolve()))]
 )
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
@@ -99,7 +99,7 @@ def test_build_meta_link(outfiles, expected):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir=(files("tests") / "data").resolve(),
+        outdir=str((files(__name__) / "data").resolve()),
     )
     assert all([elem in xml for elem in expected])
 
@@ -110,9 +110,13 @@ def test_build_meta_link(outfiles, expected):
     [
         (
             url_path(nc_file, "http"),
-            (
-                files("tests") / "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
-            ).resolve(),
+            str(
+                (
+                    files(__name__)
+                    / "data"
+                    / "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+                ).resolve()
+            ),
         ),
     ],
 )
@@ -143,7 +147,7 @@ def test_url_handler(url_type, url):
 
 @pytest.mark.parametrize(
     ("file_", "expected_content"),
-    [((files("tests") / "data/tiny_rules.csv").resolve(), ["snow"])],
+    [(str((files("tests") / "data" / "tiny_rules.csv").resolve()), ["snow"])],
 )
 def test_csv_handler(file_, expected_content):
     csv_content = csv_handler(file_)

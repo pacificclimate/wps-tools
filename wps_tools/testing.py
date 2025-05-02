@@ -41,9 +41,7 @@ def local_path(sub_filepath):
     Returns:
         str: Absolute local file path
     """
-    data_dir = files("tests") / "data"
-    full_path = (data_dir / sub_filepath).resolve()
-    return f"file://{full_path}"
+    return f"file://{(files('tests') / 'data' / sub_filepath).resolve()}"
 
 
 def url_path(sub_filepath, url_type, sub_dir="daccs"):
