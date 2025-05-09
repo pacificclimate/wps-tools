@@ -70,13 +70,13 @@ poetry install --extras "complete"
 The entire test suite can then be run by executing
 
 ```bash
-pytest
+poetry run pytest
 ```
 
 and one can specify desired test functions as optional arguments. For example, one can run `test_is_opendap_url` from `test_utils.py` by executing
 
 ```bash
-pytest tests/test_utils.py::test_is_opendap_url
+poetry run pytest tests/test_utils.py::test_is_opendap_url
 ```
 
 ### Releasing
