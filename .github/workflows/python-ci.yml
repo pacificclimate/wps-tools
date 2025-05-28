@@ -25,9 +25,11 @@ jobs:
       - name: Install cdo and poetry
         run: |
           sudo apt-get update
-          sudo apt-get install cdo
+          sudo apt-get -y install cdo
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export PATH="$HOME/.local/bin:$PATH"
+          poetry --version
 
       - name: Re-lock dependencies
         run: |
@@ -47,12 +49,12 @@ jobs:
       - name: Test with pytest (full)
         if: github.ref == 'refs/heads/master'
         run: |
-          poetry run py.test -m "not online" -v
+          poetry run pytest -m "not online" -v
 
       - name: Test with pytest (fast)
         if: github.ref != 'refs/heads/master'
         run: |
-          poetry run py.test -m "not online and not slow" -v
+          poetry run pytest -m "not online and not slow" -v
 
       - name: Code Quality
         run: poetry run black . --check
