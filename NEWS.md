@@ -1,5 +1,11 @@
 # News / Release Notes
 
+## 2.1.4
+
+_2025 Jun 16_
+
+- Maintenance updates, poetry and python versions [#62](https://github.com/pacificclimate/wps-tools/pull/62)
+
 ## 2.1.3
 
 _2025 Apr 3_
