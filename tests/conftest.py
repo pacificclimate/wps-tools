@@ -4,7 +4,7 @@ from tempfile import NamedTemporaryFile
 from pywps import Process, LiteralInput, ComplexInput, LiteralOutput, FORMATS, Format
 from wps_tools.io import collect_args
 from wps_tools.file_handling import build_meta_link
-from pkg_resources import resource_filename
+from importlib.resources import files
 import logging
 
 
@@ -162,7 +162,7 @@ def mock_metalink_respose(*args, **kwargs):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir=resource_filename(__name__, "data"),
+        outdir=str((files("tests") / "data").resolve()),
     )
 
     if args[0] == "https://test_metalinks.meta4":
@@ -176,4 +176,5 @@ def mock_metalink(monkeypatch):
 
 @pytest.fixture
 def csv_data():
-    return open(resource_filename("tests", "data/tiny_rules.csv")).read()
+    with files("tests").joinpath("data/tiny_rules.csv").open() as f:
+        return f.read()

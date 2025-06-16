@@ -1,5 +1,5 @@
 import pytest
-from pkg_resources import resource_filename
+from importlib.resources import files
 from collections import namedtuple
 from wps_tools.file_handling import (
     is_opendap_url,
@@ -75,7 +75,7 @@ def test_get_filepaths_online(nc_input):
 
 
 @pytest.mark.parametrize(
-    ("varname", "outdir"), [("tiny", resource_filename(__name__, "data"))]
+    ("varname", "outdir"), [("tiny", str((files("tests") / "data").resolve()))]
 )
 def test_collect_output_files(varname, outdir):
     outfiles = collect_output_files(varname, outdir)
@@ -99,7 +99,7 @@ def test_build_meta_link(outfiles, expected):
         varname="climo",
         desc="Climatology",
         outfiles=outfiles,
-        outdir=resource_filename(__name__, "data"),
+        outdir=str((files("tests") / "data").resolve()),
     )
     assert all([elem in xml for elem in expected])
 
@@ -110,8 +110,12 @@ def test_build_meta_link(outfiles, expected):
     [
         (
             url_path(nc_file, "http"),
-            resource_filename(
-                __name__, "data/gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+            str(
+                (
+                    files("tests")
+                    / "data"
+                    / "gdd_annual_CanESM2_rcp85_r1i1p1_1951-2100.nc"
+                ).resolve()
             ),
         ),
     ],
@@ -143,7 +147,7 @@ def test_url_handler(url_type, url):
 
 @pytest.mark.parametrize(
     ("file_", "expected_content"),
-    [(resource_filename("tests", "data/tiny_rules.csv"), ["snow"])],
+    [(str((files("tests") / "data" / "tiny_rules.csv").resolve()), ["snow"])],
 )
 def test_csv_handler(file_, expected_content):
     csv_content = csv_handler(file_)

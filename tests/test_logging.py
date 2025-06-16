@@ -3,7 +3,7 @@ import logging
 import os
 from tempfile import TemporaryDirectory
 from wps_tools.logging import log_handler
-from .common import TestResponse
+from .common import ResponseForTest
 
 logger = logging.getLogger()
 
@@ -24,7 +24,7 @@ def test_log_handler(
     wps_test_process, message, process_step, log_level, log_file_name, caplog
 ):
     process = wps_test_process
-    response = TestResponse()
+    response = ResponseForTest()
     with TemporaryDirectory() as tmpdir:  # For storing temporary log.txt file
         process.workdir = tmpdir
         log_handler(
